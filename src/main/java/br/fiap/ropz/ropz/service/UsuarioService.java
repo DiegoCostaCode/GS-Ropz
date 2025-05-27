@@ -28,8 +28,7 @@ public class UsuarioService {
     private LocalizacaoService localizacaoService;
 
     @Transactional
-    public Usuario save(UsuarioRequestDTO userRequestDTO)
-    {
+    public Usuario save(UsuarioRequestDTO userRequestDTO){
         log.info("Salvando usuário: {}", userRequestDTO.getNome());
         Usuario usuario = new Usuario();
 

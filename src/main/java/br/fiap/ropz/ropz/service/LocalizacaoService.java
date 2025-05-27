@@ -50,11 +50,18 @@ public class LocalizacaoService {
         String query = String.format("%s,%s,%s", viaCep.cep(), viaCep.localidade(), viaCep.uf());
         String urlNominatim = "https://nominatim.openstreetmap.org/search?format=json&q=" + query;
 
-        NominatimResponse[] coordenadas = restTemplate.getForObject(urlNominatim, NominatimResponse[].class);
+        NominatimResponse[] coordenadasResponse = restTemplate.getForObject(urlNominatim, NominatimResponse[].class);
 
-        log.info("Coordenadas encontradas: {}", (Object) coordenadas);
+        if (coordenadasResponse == null || coordenadasResponse.length == 0) {
+            log.error("Erro ao buscar coordenadas para o CEP: {}", cep);
+            throw new IllegalArgumentException("Coordenadas não encontradas para o CEP: " + cep);
+        }
 
-        if (coordenadas == null || coordenadas.length == 0) {
+        NominatimResponse coordenadas = coordenadasResponse[0];
+
+        log.info("Coordenadas encontradas: {}", coordenadas);
+
+        if (coordenadas == null || coordenadas.lat() == null || coordenadas.lon() == null) {
             log.error("Erro ao buscar coordenadas para o CEP: {}", cep);
             throw new IllegalArgumentException("Coordenadas não encontradas para o CEP: " + cep);
         }
@@ -65,17 +72,17 @@ public class LocalizacaoService {
         localizacaoDTO.setBairro(viaCep.bairro());
         localizacaoDTO.setCidade(viaCep.localidade());
         localizacaoDTO.setEstado(viaCep.uf());
-        localizacaoDTO.setLatitude(coordenadas[0].lat());
-        localizacaoDTO.setLatitude(coordenadas[0].lon());
+        localizacaoDTO.setLatitude(Double.parseDouble(coordenadas.lat()));
+        localizacaoDTO.setLongitude(Double.parseDouble(coordenadas.lon()));
 
-        log.info("Localização encontrada via API: {}", localizacaoDTO);
+        log.info("Localização encontrada via API");
 
         return save(localizacaoDTO);
     }
 
     public Localizacao save(LocalizacaoDTO localizacaoDTO) {
 
-        log.info("Salvando localização: {}", localizacaoDTO);
+        log.info("Salvando localização");
 
         Localizacao localizacao = new Localizacao();
 

@@ -38,6 +38,7 @@ public class Security {
                                 "/login",
                                 "/signin",
                                 "/css/**",
+                                "/",
                                 "/js/**",
                                 "/img/**",
                                 "/usuario/register",

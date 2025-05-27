@@ -26,7 +26,7 @@ public class Usuario {
     @Column(name = "telefone", length = 17, unique = true)
     private String telefone;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "localizacao_id", referencedColumnName = "id")
     private Localizacao localizacao;
 

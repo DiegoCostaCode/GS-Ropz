@@ -20,13 +20,34 @@ public class Temperatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "celsius", precision = 5)
-    private Double valor;
+    @Column(name = "openweather_icon")
+    private  String icon;
+
+    @Column(name = "tempo", length = 10)
+    private String tempo;
+
+    @Column(name = "descricao")
+    private String descricao;
+
+    @Column(name = "temperatura", precision = 5)
+    private Double temperatura;
+
+    @Column(name = "temperatura_max", precision = 5)
+    private Double temperaturaMaxima;
+
+    @Column(name = "temperatura_min", precision = 5)
+    private Double temperaturaMinima;
+
+    @Column(name = "sensacao_termica", precision = 5)
+    private Double sensacaoTermica;
+
+    @Column(name = "umidade", precision = 5)
+    private Integer umidade;
 
     @Column(name= "data_hora")
     private LocalDateTime dataHora;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "localizacao_id", referencedColumnName = "id")
     private Localizacao localizacao;
 }

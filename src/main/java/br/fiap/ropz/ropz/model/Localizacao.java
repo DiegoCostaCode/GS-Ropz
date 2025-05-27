@@ -29,9 +29,9 @@ public class Localizacao {
     @Column(name = "estado", length = 100)
     private String estado;
 
-    @Column(name = "latitude", length = 20)
-    private String latitude;
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
 
-    @Column(name = "longitude", length = 20)
-    private String longitude;
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
 }

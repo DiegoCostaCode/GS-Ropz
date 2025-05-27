@@ -6,8 +6,87 @@
   <link th:href="@{/css/global.css}" rel="stylesheet" />
   <link th:href="@{/css/home.css}" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/home.css">
 </head>
 <body>
+  <main>
+    <header>
+      <img th:src="@{/img/ropz-logo-gray.png}" alt="logo" class="logo">
+      <ul>
+        <li><a href="#" th:href="@{/logout}">logout</a></li>
+      </ul>
+    </header>
+    <div>
+      <section>
+        <div class="div-localizacao">
+          <h3>
+            <span class="material-icons" style="font-size: 18px; vertical-align: middle;">location_on</span>
+            <span th:text="${cidade}"></span>,<span th:text="${estado}"></span>
+          </h3>
+          <p> Lat. <span th:text="${lat}"></span> Long. <span th:text="${long}"></span></p>
+        </div>
+        <div class="div-alerta-prompt">
+          <div>
+            <h3>Alerta!!</h3>
+            <p>Extramente quente 35*</p>
+          </div>
+          <div>
+            <h3>Sugestao de IA</h3>
+            <p>Voue escrever aqui</p>
+          </div>
+        </div>
+        <div class="div-info">
+          <h3>Suas infos</h3>
+          <p>Nome: <span th:text="${nome}"></span></p>
+          <p>E-mail: <span th:text="${email}"></span></p>
+          <p>Telefone: <span th:text="${telefone}"></span></p>
+          <p>CEP: <span th:text="${cep}"></span></p>
+        </div>
+      </section>
+      <aside>
+        <div class="div-aside-clima" th:object="${temperaturaAtual}">
 
+          <div>
+            <img class="open-weather" th:src="'https://openweathermap.org/img/wn/' + *{icon} + '@2x.png'" alt="ícone do tempo" />
+            <h2 th:text="*{tempo}"></h2>
+          </div>
+
+          <ul>
+            <li>
+              <p>Temp</p>
+              <span th:text="*{temperatura} + '°C'"></span>
+            </li>
+            <li>
+              <p>Max</p>
+              <span th:text="*{temperaturaMaxima} + '°C'"></span>
+            </li>
+            <li>
+              <p>Min</p>
+              <span th:text="*{temperaturaMinima} + '°C'"></span>
+            </li>
+            <li>
+              <p>Sensação</p>
+              <span th:text="*{sensacaoTermica} + '°C'"></span>
+            </li>
+            <li>
+              <p>Umidade</p>
+              <span th:text="*{umidade} + ' m/s'"></span>
+            </li>
+          </ul>
+
+        </div>
+        <div class="div-history">
+          <ul>
+            <li> valor 1</li>
+            <li> valor 2</li>
+            <li> valor 3</li>
+            <li> valor 4</li>
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+  </main>
 </body>
 </html>
