@@ -1,5 +1,7 @@
 package br.fiap.ropz.ropz.model;
 
+import br.fiap.ropz.ropz.model.usuario.Enum_tipo_usuario;
+import br.fiap.ropz.ropz.model.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -30,6 +31,10 @@ public class Credenciais {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="tipo_usuario")
+    private Enum_tipo_usuario tipo;
+
     @Column(name = "data_cadastro")
-    private Date dataCadastro;
+    private LocalDateTime dataCadastro;
 }

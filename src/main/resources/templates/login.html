@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link th:href="@{/css/global.css}" rel="stylesheet" />
+  <link th:href="@{/css/cadastro.css}" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <form method="post" th:action="@{/login}">
+
+    <section>
+      <img th:src="@{/img/ropz-logo-gray.png}" alt="logo" class="logo">
+    </section>
+
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="username" placeholder="calor@gmail.com">
+    </div>
+
+    <div>
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="password" placeholder="Senha super secreta">
+    </div>
+
+    <button type="submit">Entrar</button>
+  </form>
+</body>
+</html>

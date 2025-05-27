@@ -40,6 +40,8 @@ public class LocalizacaoService {
         String urlViaCep = "https://viacep.com.br/ws/" + cep + "/json/";
         ViaCepResponse viaCep = restTemplate.getForObject(urlViaCep, ViaCepResponse.class);
 
+        log.info("ViaCep: {}", viaCep);
+
         if (viaCep == null || viaCep.cep() == null) {
             log.error("Erro ao buscar CEP: {}", cep);
             throw new IllegalArgumentException("CEP inválido ou não encontrado: " + cep);
@@ -49,6 +51,8 @@ public class LocalizacaoService {
         String urlNominatim = "https://nominatim.openstreetmap.org/search?format=json&q=" + query;
 
         NominatimResponse[] coordenadas = restTemplate.getForObject(urlNominatim, NominatimResponse[].class);
+
+        log.info("Coordenadas encontradas: {}", (Object) coordenadas);
 
         if (coordenadas == null || coordenadas.length == 0) {
             log.error("Erro ao buscar coordenadas para o CEP: {}", cep);

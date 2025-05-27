@@ -36,5 +36,4 @@ public class UsuarioRequestDTO {
     @Size(max = 9, message = "CEP deve ter no máximo 9 caracteres")
     private String cep;
 
-
 }

@@ -1,5 +1,6 @@
 package br.fiap.ropz.ropz.model;
 
+import br.fiap.ropz.ropz.model.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
