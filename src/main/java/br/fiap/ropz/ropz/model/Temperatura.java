@@ -20,7 +20,7 @@ public class Temperatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "celsius", precision = 5, scale = 2)
+    @Column(name = "celsius", precision = 5)
     private Double valor;
 
     @Column(name= "data_hora")

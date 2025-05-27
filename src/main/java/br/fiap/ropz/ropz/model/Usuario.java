@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @Entity
@@ -15,16 +13,21 @@ import java.util.Date;
 @AllArgsConstructor
 @Table(name = "ropz_usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true, length = 100)
     private String nome;
-    @Column(name = "data_cadastro")
-    private Date dataCadastro;
+
     @Column(name = "telefone", length = 17, unique = true)
     private String telefone;
+
     @OneToOne
     @JoinColumn(name = "localizacao_id", referencedColumnName = "id")
     private Localizacao localizacao;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Credenciais credenciais;
 }

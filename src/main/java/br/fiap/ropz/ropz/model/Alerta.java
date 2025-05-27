@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "ropz_alerta")
 public class Alerta {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
