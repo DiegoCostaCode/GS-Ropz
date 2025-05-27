@@ -41,6 +41,7 @@ public class UsuarioService {
 
         credenciaisService.save(userRequestDTO.getEmail(), userRequestDTO.getSenha(), usuarioSalvo);
 
+        log.info("Usuario criado! {} ", usuarioSalvo.getId());
         return usuarioSalvo;
     }
 
