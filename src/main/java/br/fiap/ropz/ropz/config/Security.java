@@ -36,13 +36,14 @@ public class Security {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
-                                "/signin",
+                                "/cadaster",
                                 "/css/**",
                                 "/",
                                 "/js/**",
                                 "/img/**",
                                 "/usuario/register",
-                                "/usuario/api/**"
+                                "/usuario/api/**",
+                                "relatorio/**"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -1,7 +1,6 @@
-package br.fiap.ropz.ropz.model;
+package br.fiap.ropz.ropz.model.usuario;
 
-import br.fiap.ropz.ropz.model.usuario.Enum_tipo_usuario;
-import br.fiap.ropz.ropz.model.usuario.Usuario;
+import br.fiap.ropz.ropz.model.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +32,7 @@ public class Credenciais {
 
     @Enumerated(EnumType.STRING)
     @Column(name="tipo_usuario")
-    private Enum_tipo_usuario tipo;
+    private EnumTipoUsuario tipo;
 
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;

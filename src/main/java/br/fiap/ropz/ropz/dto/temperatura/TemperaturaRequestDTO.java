@@ -1,6 +1,7 @@
 package br.fiap.ropz.ropz.dto.temperatura;
 
 import br.fiap.ropz.ropz.model.Localizacao;
+import br.fiap.ropz.ropz.model.temperatura.EnumOrigem;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,8 @@ public record TemperaturaRequestDTO (
         Double minValorCelsius,
         Double sensacaoTermica,
         Integer umidade,
+        LocalDateTime criadoEm,
         LocalDateTime dataHora,
-        Localizacao localizacao
+        Localizacao localizacao,
+        EnumOrigem origem
 ){ }

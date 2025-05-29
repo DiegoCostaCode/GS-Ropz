@@ -1,6 +1,6 @@
 package br.fiap.ropz.ropz.service.auth;
 
-import br.fiap.ropz.ropz.model.usuario.Usuario;
+import br.fiap.ropz.ropz.model.Usuario;
 import br.fiap.ropz.ropz.model.usuario.UsuarioDetails;
 import br.fiap.ropz.ropz.service.UsuarioService;
 import org.slf4j.Logger;

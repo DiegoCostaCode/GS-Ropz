@@ -3,7 +3,7 @@ main {
     border-radius: 20px;
     padding: 10px;
     width: 750px;
-    height: 500px;
+    height: auto;
     box-shadow: 0 0 7px 1px #ececec;
 }
 
@@ -31,10 +31,19 @@ header li {
     text-decoration: none;
 }
 
-header ul li a {
+.lowkey-btn {
     text-decoration: none;
-    color: black;
+    color: #323131;
     font-weight: bold;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.5s ease;
+    transition-delay: 0.2s;
+}
+
+.lowkey-btn:hover{
+    background: #323131;
+    color: #fff;
 }
 
 main > div {
@@ -97,6 +106,18 @@ section div, aside div{
     border-radius: 10px;
 }
 
+.div-aside-clima .temp-atual{
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    margin: 0px;
+    padding: 5px;
+}
+
+.div-aside-clima .temp-atual h1{
+    font-size: 30px;
+}
+
 .div-aside-clima ul {
     list-style: none;
     display: flex;
@@ -121,13 +142,98 @@ section div, aside div{
     max-height: 100%;
 }
 
+.container-weather-line {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0px;
+}
+
+.div-history .open-weather-icon, .div-alerta-prompt .open-weather-icon
+{
+    width: 30px;
+    height: 30px;
+    background: aqua;
+    border-radius: 5px;
+}
+
 .div-history ul li{
     list-style-type: none;
 
 }
 
-.open-weather{
+.open-weather-icon{
     width: 50px;
     height: 50px;
 }
+
+.div-weather-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.div-celsius-value {
+    flex: 1;
+    text-align: center;
+}
+
+.section-status-actual-weather, .section-status-loading{
+    display: flex;
+    margin-top: 10px;
+    padding: 5px;
+    border-top: 0.5px solid #ececec;
+}
+
+.section-status-loading p{
+    font-weight: bold;
+}
+
+.status-risco {
+    margin-right: 10px;
+}
+
+.ia-precaucoes-mesage p{
+    max-height: 80px;
+}
+
+.status-risco h3, .ia-precaucoes-mesage h3{
+    font-weight: bold;
+}
+
+.load-div {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0px;
+}
+
+input {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 300px;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid #323131;
+    box-shadow: 0 0 0px 1px #323131;
+}
+
+.btn-update-info {
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.5s ease;
+    transition-delay: 0.2s;
+}
+
+.btn-update-info:hover{
+    background-color: #323131;
+    color: #fff;
+}
+
 

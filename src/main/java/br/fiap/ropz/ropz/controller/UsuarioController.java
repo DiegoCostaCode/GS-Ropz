@@ -2,7 +2,13 @@ package br.fiap.ropz.ropz.controller;
 
 import br.fiap.ropz.ropz.dto.usuario.UsuarioRequestDTO;
 import br.fiap.ropz.ropz.dto.usuario.UsuarioResponseDTO;
-import br.fiap.ropz.ropz.model.usuario.Usuario;
+import br.fiap.ropz.ropz.model.Localizacao;
+import br.fiap.ropz.ropz.model.Usuario;
+import br.fiap.ropz.ropz.model.relatorio.Relatorio;
+import br.fiap.ropz.ropz.model.temperatura.Temperatura;
+import br.fiap.ropz.ropz.model.usuario.UsuarioDetails;
+import br.fiap.ropz.ropz.service.RelatorioService;
+import br.fiap.ropz.ropz.service.TemperaturaService;
 import br.fiap.ropz.ropz.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -11,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/usuario")
@@ -23,14 +32,89 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private TemperaturaService temperaturaService;
+
+    @Autowired
+    private RelatorioService relatorioService;
+
     @PostMapping("/register")
     public String save(@Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
         log.info("Recebida requisição de registro via formulário para usuário: {}", userRequestDTO.getEmail());
 
-        usuarioService.save(userRequestDTO);
+        Usuario usuario = usuarioService.save(userRequestDTO);
+        Localizacao localizacao = usuario.getLocalizacao();
+
+        temperaturaService.consultarTemperaturaAtual(localizacao);
+
+        temperaturaService.consultarMaiorPrevisao(localizacao);
+
+        relatorioService.getRelatorioOrigemForecast(localizacao);
+
+        relatorioService.getRelatorioOrigemCurrent(localizacao);
+
+        int tentativas = 10;
+        int esperar = 2000;
+
+        while (relatorioService.getRelatorioOrigemForecast(localizacao) == null && tentativas < esperar) {
+            try {
+                Thread.sleep(esperar);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            tentativas++;
+        }
+
+
+        return "redirect:/login";
+    }
+
+    @GetMapping("/update")
+    public String update(@AuthenticationPrincipal UsuarioDetails user, @Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
+        log.info("Recebida requisição de atualização via formulário para usuário: {}", userRequestDTO.getEmail());
+
+        Usuario usuario = user.getUsuario();
+
+        Usuario usuarioSalvo = usuarioService.update(usuario, userRequestDTO);
+
+        Localizacao localizacao = usuarioSalvo.getLocalizacao();
+
+        temperaturaService.consultarTemperaturaAtual(localizacao);
+
+        temperaturaService.consultarMaiorPrevisao(localizacao);
+
+        relatorioService.getRelatorioOrigemForecast(localizacao);
+
+        relatorioService.getRelatorioOrigemCurrent(localizacao);
+
+        int tentativas = 10;
+        int esperar = 2000;
+
+        while (relatorioService.getRelatorioOrigemForecast(localizacao) == null && tentativas < esperar) {
+            try {
+                Thread.sleep(esperar);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            tentativas++;
+        }
 
         return "redirect:/";
     }
+
+    @GetMapping("/delete")
+    public String delete(@AuthenticationPrincipal UsuarioDetails user, @Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
+        log.info("Recebida requisição de atualização via formulário para usuário: {}", userRequestDTO.getEmail());
+
+        Usuario usuario = user.getUsuario();
+
+        usuarioService.deleteById(usuario.getId());
+
+        return "redirect:/cadaster";
+    }
+
 
     @PostMapping(value = "/api/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsuarioResponseDTO> saveApi(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) {

@@ -1,5 +1,6 @@
-package br.fiap.ropz.ropz.model;
+package br.fiap.ropz.ropz.model.temperatura;
 
+import br.fiap.ropz.ropz.model.Localizacao;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,8 +45,15 @@ public class Temperatura {
     @Column(name = "umidade", precision = 5)
     private Integer umidade;
 
+    @Column(name= "criado_em")
+    private LocalDateTime criadoEm;
+
     @Column(name= "data_hora")
     private LocalDateTime dataHora;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dados_origem")
+    private EnumOrigem dadosOrigem;
 
     @ManyToOne
     @JoinColumn(name = "localizacao_id", referencedColumnName = "id")

@@ -3,7 +3,7 @@ package br.fiap.ropz.ropz.service;
 import br.fiap.ropz.ropz.dto.usuario.UsuarioRequestDTO;
 import br.fiap.ropz.ropz.dto.usuario.UsuarioResponseDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
-import br.fiap.ropz.ropz.model.usuario.Usuario;
+import br.fiap.ropz.ropz.model.Usuario;
 import br.fiap.ropz.ropz.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -46,6 +46,25 @@ public class UsuarioService {
         return usuarioSalvo;
     }
 
+    @Transactional
+    public Usuario update(Usuario usuario, UsuarioRequestDTO userRequestDTO){
+        log.info("Atualizando usuário: {}", userRequestDTO.getNome());
+
+        usuario.setNome(userRequestDTO.getNome());
+        usuario.setTelefone(userRequestDTO.getTelefone());
+
+        Localizacao localizacao = localizacaoService.buscarPorCep(userRequestDTO.getCep());
+        usuario.setLocalizacao(localizacao);
+
+        Usuario usuarioSalvo = usuarioRepository.save(usuario);
+
+        credenciaisService.update(userRequestDTO.getEmail(), userRequestDTO.getSenha(), usuarioSalvo);
+
+        log.info("Usuário atualizado! ID: {}", usuarioSalvo.getId());
+        return usuarioSalvo;
+    }
+
+
     public Usuario getById(Long idUsuario) {
         log.info("Buscando usuário por ID: {}", idUsuario);
         return usuarioRepository.findById(idUsuario).orElse(null);
@@ -67,6 +86,21 @@ public class UsuarioService {
                 usuario.getLocalizacao().getCep(),
                 usuario.getCredenciais().getDataCadastro().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
         );
+    }
+
+    public UsuarioRequestDTO usuarioRequestDTO(Long Idusuario) {
+
+        Usuario usuario = getById(Idusuario);
+
+        UsuarioRequestDTO usuarioRequestDTO = new UsuarioRequestDTO();
+
+        usuarioRequestDTO.setNome(usuario.getNome());
+        usuarioRequestDTO.setTelefone(usuario.getTelefone());
+        usuarioRequestDTO.setSenha("");
+        usuarioRequestDTO.setEmail(usuario.getCredenciais().getEmail());
+        usuarioRequestDTO.setCep(usuario.getLocalizacao().getCep());
+
+        return usuarioRequestDTO;
     }
 
     public void deleteById(Long idUsuario) {

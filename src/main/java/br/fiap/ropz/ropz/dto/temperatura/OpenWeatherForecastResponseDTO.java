@@ -2,11 +2,16 @@ package br.fiap.ropz.ropz.dto.temperatura;
 
 import java.util.List;
 
-public record OpenWeatherResponseDTO(
-        Long dt,
-        Main main,
-        List<Weather> weather
+public record OpenWeatherForecastResponseDTO(
+        List<ForecastEntry> list
 ) {
+
+    public record ForecastEntry(
+            String dt_txt,
+            Main main,
+            List<Weather> weather
+    ) {}
+
     public record Main(
             Double temp,
             Double feels_like,
@@ -20,4 +25,6 @@ public record OpenWeatherResponseDTO(
             String description,
             String icon
     ) {}
+
 }
+

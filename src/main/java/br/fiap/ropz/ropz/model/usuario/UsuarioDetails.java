@@ -1,6 +1,6 @@
 package br.fiap.ropz.ropz.model.usuario;
 
-import br.fiap.ropz.ropz.model.Credenciais;
+import br.fiap.ropz.ropz.model.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -5,15 +5,13 @@ import br.fiap.ropz.ropz.dto.localizacao.NominatimResponse;
 import br.fiap.ropz.ropz.dto.localizacao.ViaCepResponse;
 import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.repository.LocalizacaoRepository;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Set;
 
 @Service
 public class LocalizacaoService {
@@ -96,4 +94,8 @@ public class LocalizacaoService {
         return localizacaoRepository.save(localizacao);
     }
 
+    public Localizacao findById(Long id) {
+        log.info("Consultando localização por ID: {}", id);
+        return localizacaoRepository.findById(id).orElse(null);
+    }
 }

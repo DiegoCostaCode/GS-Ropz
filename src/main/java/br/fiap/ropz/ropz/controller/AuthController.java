@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class AuthController {
 
-    @GetMapping("/signin")
+    @GetMapping("/cadaster")
     public String cadastrarUsuario(Model model) {
 
         model.addAttribute("usuarioRequest", new UsuarioRequestDTO());

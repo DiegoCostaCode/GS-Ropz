@@ -3,13 +3,13 @@ package br.fiap.ropz.ropz.model.usuario;
 import lombok.Getter;
 
 @Getter
-public enum Enum_tipo_usuario {
+public enum EnumTipoUsuario {
     ADM("adm"),
     DEFAULT("default");
 
     private final String descricao;
 
-    Enum_tipo_usuario(String descricao) {
+    EnumTipoUsuario(String descricao) {
         this.descricao = descricao;
     }
 }

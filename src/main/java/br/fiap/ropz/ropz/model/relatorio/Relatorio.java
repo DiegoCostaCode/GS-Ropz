@@ -1,5 +1,6 @@
-package br.fiap.ropz.ropz.model;
+package br.fiap.ropz.ropz.model.relatorio;
 
+import br.fiap.ropz.ropz.model.temperatura.Temperatura;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,14 +14,15 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ropz_alerta")
-public class Alerta {
+@Table(name = "ropz_relatorio")
+public class Relatorio {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name= "data_envio")
-    private LocalDateTime dataEnvio;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "classificacao")
+    private EnumRisco classificacao;
 
     @Column(name = "mensagem")
     private String mensagem;
@@ -28,5 +30,8 @@ public class Alerta {
     @ManyToOne
     @JoinColumn(name = "temp_id", referencedColumnName = "id")
     private Temperatura temperatura;
+
+    @Column(name= "criado_em")
+    private LocalDateTime criadoEm;
 
 }
