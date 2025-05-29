@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt_BR" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Home</title>
@@ -16,7 +16,7 @@
     <header>
       <img th:src="@{/img/ropz-logo-gray.png}" alt="logo" class="logo">
       <ul>
-        <li><a href="#"  class="lowkey-btn" th:href="@{/logout}">logout</a></li>
+        <li><a href="#"  class="lowkey-btn" th:href="@{/logout}" th:text="#{href.logout }"></a></li>
       </ul>
     </header>
     <div>
@@ -31,7 +31,7 @@
 
         <div class="div-alerta-prompt">
           <div>
-            <h3>Maior temperatura nos próximos 5 dias...</h3>
+            <h3 th:text="#{h3.alert.prompt}" style="width: 320px"></h3>
               <div class="container-weather-line">
                 <span th:text="${#temporals.format(temperaturaAlta.temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
                 <span th:text="${#numbers.formatDecimal(temperaturaAlta.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
@@ -44,34 +44,33 @@
           </div>
 
           <div>
-            <h3>Precauções</h3>
+            <h3 th:text="#{h3.alert.prompt.ia}"></h3>
             <p th:text="${temperaturaAlta.mensagem}"></p>
           </div>
 
         </div>
 
         <div class="div-info">
-          <h3>Suas infos</h3>
+          <h3 th:text="#{h3.div.info}"></h3>
 
           <form action="/usuario/update" method="get" th:object="${usuarioRequestDTO}">
-            <label for="nome">Nome:</label>
+            <label for="nome" th:text="#{label.name}"></label>
             <input type="text" id="nome" th:field="*{nome}" required><br>
 
-            <label for="email">E-mail:</label>
+            <label for="email" th:text="#{label.email}"></label>
             <input type="email" id="email" th:field="*{email}" required><br>
 
-            <label for="telefone">Telefone:</label>
+            <label for="telefone" th:text="#{label.tel}"></label>
             <input type="text" id="telefone" th:field="*{telefone}" required maxlength="15"><br>
 
-            <label for="senha">Senha:</label>
+            <label for="senha" th:text="#{label.password}"></label>
             <input type="text" id="senha" th:field="*{senha}" required><br>
 
-            <label for="cep">CEP:</label>
+            <label for="cep" th:text="#{label.codigo.postal}"></label>
             <input type="text" id="cep" th:field="*{cep}" required maxlength="9"><br>
 
-
-            <button class="btn-update-info" type="submit">Atualizar</button>
-            <a class="lowkey-btn" th:href="@{/usuario/delete}">deletar minha conta</a>
+            <button class="btn-update-info" type="submit" th:text="#{btn.update}"></button>
+            <a class="lowkey-btn" th:href="@{/usuario/delete}" th:text="#{href.delete}"></a>
           </form>
 
         </div>
@@ -96,31 +95,31 @@
           <ul>
 
             <li>
-              <p>Max</p>
+              <p th:text="#{stats.temperature.max}"></p>
               <span th:text="*{#numbers.formatDecimal(temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
             </li>
             <li>
-              <p>Min</p>
+              <p th:text="#{stats.temperature.min}">Min</p>
               <span th:text="*{#numbers.formatDecimal(temperatura.temperaturaMinima, 1, 0)} + '°C'"></span>
             </li>
             <li>
-              <p>Sensação</p>
+              <p th:text="#{stats.temperature.sens}">Sensação</p>
               <span th:text="*{#numbers.formatDecimal(temperatura.sensacaoTermica, 1, 0)} + '°C'"></span>
             </li>
             <li>
-              <p>Umidade</p>
+              <p th:text="#{stats.temperature.humid}">Umidade</p>
               <span th:text="*{temperatura.umidade} + ' m/s'"></span>
             </li>
           </ul>
 
           <section class="section-status-actual-weather">
             <div class="status-risco">
-              <h3>Risco</h3>
+              <h3 th:text="#{h3.actual.weather}"></h3>
               <p id="risco-texto" th:text="*{classificacao.getDescricao()}"></p>
             </div>
 
             <div class="ia-precaucoes-mesage">
-              <h3>Precauções</h3>
+              <h3 th:text="#{h3.alert.prompt.ia}">Precauções</h3>
               <p id="mensagem-texto" th:text="*{mensagem}"></p>
             </div>
 
@@ -146,5 +145,9 @@
       </aside>
     </div>
   </main>
+  <footer class="footer-cls">
+      <a href="?lang=pt_BR" class="link-href">Br</a>
+      <a href="?lang=en" class="link-href">En</a>
+  </footer>
 </body>
 </html>
