@@ -6,6 +6,8 @@
   <link th:href="@{/css/global.css}" rel="stylesheet" />
   <link th:href="@{/css/cadastro.css}" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/home.css">
+  <link rel="stylesheet" href="../static/css/cadastro.css">
 </head>
 <body>
   <form method="post" th:action="@{/login}">
@@ -25,6 +27,7 @@
     </div>
 
     <button type="submit">Entrar</button>
+    <a th:href="@{/cadaster}" class="link-href">Não tenho conta ainda</a>
   </form>
 </body>
 </html>

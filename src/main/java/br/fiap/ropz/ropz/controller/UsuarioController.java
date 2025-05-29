@@ -105,8 +105,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/delete")
-    public String delete(@AuthenticationPrincipal UsuarioDetails user, @Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
-        log.info("Recebida requisição de atualização via formulário para usuário: {}", userRequestDTO.getEmail());
+    public String delete(@AuthenticationPrincipal UsuarioDetails user) {
+        log.info("Recebida requisição de atualização via formulário para usuário");
 
         Usuario usuario = user.getUsuario();
 

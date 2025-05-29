@@ -28,7 +28,7 @@
 
         <div>
             <label for="telefone">Telefone:</label>
-            <input type="tel" id="telefone" name="telefone" max=15 placeholder="(99) 9999-9999" th:field="*{telefone}" oninput="formatarTelefone(this)">
+            <input type="tel" id="telefone" name="telefone" max=15 placeholder="(99) 9999-9999" th:field="*{telefone}" maxlength="15" oninput="formatarTelefone(this)">
         </div>
 
         <div>
@@ -38,10 +38,11 @@
 
         <div class="cep-div">
             <label for="cep">CEP:</label>
-            <input type="text" id="cep" name="cep" max=9 placeholder="00000-000" th:field="*{cep}" oninput="formatarCep(this)">
+            <input type="text" id="cep" name="cep" max=9 placeholder="00000-000" th:field="*{cep}" maxlength="9" oninput="formatarCep(this)">
         </div>
 
         <button type="submit">Cadastrar</button>
+        <a th:href="@{/login}" class="link-href">Já tenho conta</a>
     </form>
 </body>
 </html>

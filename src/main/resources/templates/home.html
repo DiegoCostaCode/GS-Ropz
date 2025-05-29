@@ -36,6 +36,7 @@
                 <span th:text="${#temporals.format(temperaturaAlta.temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
                 <span th:text="${#numbers.formatDecimal(temperaturaAlta.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
                 <img class="open-weather-icon"
+                     th:if="${temperaturaAlta.temperatura.icon} != null"
                      th:src="'https://openweathermap.org/img/wn/' + ${temperaturaAlta.temperatura.icon} + '@2x.png'"
                      alt="ícone do tempo" />
                 <span th:text="${temperaturaAlta.classificacao.getDescricao()}"></span>
@@ -60,17 +61,17 @@
             <input type="email" id="email" th:field="*{email}" required><br>
 
             <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" th:field="*{telefone}" required><br>
+            <input type="text" id="telefone" th:field="*{telefone}" required maxlength="15"><br>
 
             <label for="senha">Senha:</label>
             <input type="text" id="senha" th:field="*{senha}" required><br>
 
             <label for="cep">CEP:</label>
-            <input type="text" id="cep" th:field="*{cep}" required><br>
+            <input type="text" id="cep" th:field="*{cep}" required maxlength="9"><br>
 
 
             <button class="btn-update-info" type="submit">Atualizar</button>
-            <a class="lowkey-btn" th:href="@{/usuario/delete/}">deletar minha conta</a>
+            <a class="lowkey-btn" th:href="@{/usuario/delete}">deletar minha conta</a>
           </form>
 
         </div>
@@ -81,8 +82,10 @@
         <div class="div-aside-clima" th:object="${relatorioTempAtual}">
           <section class="temp-atual">
             <div class="div-weather-info">
-              <img class="open-weather-icon" th:src="'https://openweathermap.org/img/wn/' + *{temperatura.icon} + '@2x.png'" alt="ícone do tempo" />
-              <h2 th:text="*{temperatura.descricao}" style="text-transform: capitalize"></h2>
+              <img class="open-weather-icon"
+                   th:if="${relatorioTempAtual.temperatura.icon} != null"
+                   th:src="'https://openweathermap.org/img/wn/' + *{temperatura.icon} + '@2x.png'"
+                   alt="ícone do tempo" />
             </div>
 
             <div class="div-celsius-value">
@@ -131,6 +134,7 @@
               <span th:text="${#temporals.format(historico.temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
               <span th:text="${#numbers.formatDecimal(historico.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
               <img class="open-weather-icon"
+                   th:if="${historico.temperatura.icon} != null"
                    th:src="'https://openweathermap.org/img/wn/' + ${historico.temperatura.icon} + '@2x.png'"
                    alt="ícone do tempo" />
               <span th:text="${historico.classificacao.getDescricao()}"></span>

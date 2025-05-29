@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,13 @@ public class MistralService {
 
     private ChatLanguageModel model;
 
+    @Value("${mistral.ip.server}")
+    private String serverIP;
+
     @PostConstruct
     public void init() {
         this.model = OllamaChatModel.builder()
-                .baseUrl("http://localhost:11434")
+                .baseUrl("http://" + serverIP + ":11434")
                 .modelName("mistral")
                 .build();
     }

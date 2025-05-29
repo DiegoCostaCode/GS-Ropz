@@ -42,3 +42,16 @@ button:hover{
     background-color: #323131;
     color: #fff;
 }
+
+.link-href {
+    text-decoration: none;
+    color: #323131;
+    font-weight: bold;
+    transition: all 0.5s ease;
+    transition-delay: 0.2s;
+}
+
+.link-href:hover
+{
+    text-decoration: underline;
+}

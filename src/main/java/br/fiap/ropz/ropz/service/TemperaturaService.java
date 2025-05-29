@@ -39,7 +39,6 @@ public class TemperaturaService {
     @Value("${openweather.api.key}")
     private String apiKey;
 
-
     @Autowired
     private TemperaturaRepository temperaturaRepository;
 
@@ -71,32 +70,17 @@ public class TemperaturaService {
 
         OpenWeatherResponseDTO response = restTemplate.getForObject(url, OpenWeatherResponseDTO.class);
 
-        if (response == null || response.main() == null || response.weather().isEmpty()) {
-            log.error("Erro ao buscar dados do clima para a localização: {}", localizacao.getCep());
-            throw new RuntimeException("Erro ao buscar dados do clima.");
-        }
+        validarRespostaAtual(response, localizacao);
 
         log.info("Dados do clima obtidos com sucesso");
 
-        TemperaturaRequestDTO temperaturaRequest = new TemperaturaRequestDTO(
-                response.weather().get(0).icon(),
-                response.weather().get(0).main(),
-                response.weather().get(0).description(),
-                response.main().temp(),
-                response.main().temp_max(),
-                response.main().temp_min(),
-                response.main().feels_like(),
-                response.main().humidity(),
-                LocalDateTime.now(),
-                LocalDateTime.ofInstant(Instant.ofEpochSecond(response.dt()), ZoneId.of("America/Sao_Paulo")),
-                localizacao,
-                EnumOrigem.CURRENT
-        );
+        TemperaturaRequestDTO temperaturaRequestDTO = criarDtoAtual(response, localizacao);
 
-        return save(temperaturaRequest);
+        return save(temperaturaRequestDTO);
     }
 
     public Temperatura consultarMaiorPrevisao(Localizacao localizacao) {
+
         log.info("Consultando previsão futura para maior temperatura em: {}", localizacao.getCep());
 
         Temperatura ultimaPrevisao = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.FORECAST);
@@ -117,10 +101,7 @@ public class TemperaturaService {
 
         OpenWeatherForecastResponseDTO forecast = restTemplate.getForObject(url, OpenWeatherForecastResponseDTO.class);
 
-        if (forecast == null || forecast.list() == null || forecast.list().isEmpty()) {
-            log.error("Erro ao buscar dados de previsão para a localização: {}", localizacao.getCep());
-            throw new RuntimeException("Erro ao buscar dados de previsão.");
-        }
+        validarRespostaForecast(forecast, localizacao);
 
         var maior = forecast.list().stream()
                 .max(Comparator.comparingDouble(f -> f.main().temp_max()))
@@ -128,22 +109,61 @@ public class TemperaturaService {
 
         log.info("Maior previsão encontrada: {}°C em {}", maior.main().temp_max(), maior.dt_txt());
 
-        TemperaturaRequestDTO temperaturaRequestDTO = new TemperaturaRequestDTO(
-                maior.weather().get(0).icon(),
-                maior.weather().get(0).main(),
-                maior.weather().get(0).description(),
+        TemperaturaRequestDTO temperaturaRequestDTO = criarDtoForecast(maior, localizacao);
+
+        return save(temperaturaRequestDTO);
+    }
+
+    private void validarRespostaAtual(OpenWeatherResponseDTO response, Localizacao localizacao) {
+        if (response == null || response.main() == null || response.weather() == null || response.weather().isEmpty()) {
+            log.error("Erro ao buscar dados do clima para a localização: {}", localizacao.getCep());
+            throw new RuntimeException("Erro ao buscar dados do clima.");
+        }
+    }
+
+    private void validarRespostaForecast(OpenWeatherForecastResponseDTO forecast, Localizacao localizacao) {
+        if (forecast == null || forecast.list() == null || forecast.list().isEmpty()) {
+            log.error("Erro ao buscar dados de previsão para a localização: {}", localizacao.getCep());
+            throw new RuntimeException("Erro ao buscar dados de previsão.");
+        }
+    }
+
+    private TemperaturaRequestDTO criarDtoAtual(OpenWeatherResponseDTO response, Localizacao localizacao) {
+        var weather = response.weather().get(0);
+        return new TemperaturaRequestDTO(
+                weather.icon(),
+                weather.main(),
+                weather.description(),
+                response.main().temp(),
+                response.main().temp_max(),
+                response.main().temp_min(),
+                response.main().feels_like(),
+                response.main().humidity(),
+                LocalDateTime.now(),
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(response.dt()), ZoneId.of("America/Sao_Paulo")),
+                localizacao,
+                EnumOrigem.CURRENT
+        );
+    }
+
+    private TemperaturaRequestDTO criarDtoForecast(OpenWeatherForecastResponseDTO.ForecastEntry maior, Localizacao localizacao) {
+
+        var weather = maior.weather().get(0);
+
+        return new TemperaturaRequestDTO(
+                weather.icon(),
+                weather.main(),
+                weather.description(),
                 maior.main().temp(),
                 maior.main().temp_max(),
                 maior.main().temp_min(),
                 maior.main().feels_like(),
                 maior.main().humidity(),
-                LocalDateTime.now(), // criadoEm
-                LocalDateTime.parse(maior.dt_txt(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), // dataHora prevista
+                LocalDateTime.now(),
+                LocalDateTime.parse(maior.dt_txt(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 localizacao,
                 EnumOrigem.FORECAST
         );
-
-        return save(temperaturaRequestDTO);
     }
 
     public Temperatura save(TemperaturaRequestDTO temperaturaRequest) {
