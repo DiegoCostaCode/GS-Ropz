@@ -3,6 +3,7 @@ package br.fiap.ropz.ropz.service;
 import br.fiap.ropz.ropz.dto.mistral.MistralPromptResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatoriosServiceDTO;
+import br.fiap.ropz.ropz.dto.temperatura.TemperaturaResponseDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.relatorio.Relatorio;
 import br.fiap.ropz.ropz.model.temperatura.EnumOrigem;
@@ -57,12 +58,13 @@ public class RelatorioService {
 
     public RelatorioResponseDTO relatorioToResponse(Relatorio relatorio) {
 
+        TemperaturaResponseDTO tempResponse = temperaturaService.temperaturaToResponse(relatorio.getTemperatura());
+
         return new RelatorioResponseDTO(
                 relatorio.getId(),
                 relatorio.getClassificacao().getDescricao(),
                 relatorio.getMensagem(),
-                relatorio.getTemperatura().getId(),
-                relatorio.getTemperatura().getIcon(),
+                tempResponse,
                 relatorio.getTemperatura().getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
                 relatorio.getCriadoEm().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
         );

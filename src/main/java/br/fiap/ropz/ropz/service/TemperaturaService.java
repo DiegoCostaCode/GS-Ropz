@@ -87,7 +87,7 @@ public class TemperaturaService {
 
         if (ultimaPrevisao != null && ultimaPrevisao.getDataHora().isAfter(LocalDateTime.now())) {
             log.info("Já existe uma previsão futura válida até: {}", ultimaPrevisao.getDataHora());
-
+            return;
         }
 
         log.info("Fazendo nova requisição de forecast...");
@@ -219,5 +219,22 @@ public class TemperaturaService {
         return temperaturaRepository.findFirstByLocalizacaoAndTipoConsultaOrderByCriadoEmDesc(localizacao, dadosOrigem).orElse(null);
     }
 
+    public TemperaturaResponseDTO temperaturaToResponse(Temperatura temperatura) {
+        log.info("Convertendo relatorio para DTO de resposta");
+
+        return new TemperaturaResponseDTO(
+                temperatura.getId(),
+                temperatura.getIcon(),
+                temperatura.getTempo(),
+                temperatura.getDescricao(),
+                temperatura.getTemperatura(),
+                temperatura.getTemperaturaMinima(),
+                temperatura.getTemperaturaMaxima(),
+                temperatura.getSensacaoTermica(),
+                temperatura.getUmidade(),
+                temperatura.getLocalizacao().getId(),
+                temperatura.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+        );
+    }
 }
 

@@ -19,8 +19,4 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, Long> {
 
     Optional<Relatorio> findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsulta(Localizacao localizacao, EnumOrigem dadosOrigem);
 
-//    Long countByTemperatura_DadosOrigem_CurrentAndTemperatura_Localizacao(EnumOrigem dadosOrigem, Localizacao localizacao);
-//
-//    Long countByTemperatura_DadosOrigem_ForecastAndTemperatura_Localizacao(EnumOrigem dadosOrigem, Localizacao localizacao);
-
 }
