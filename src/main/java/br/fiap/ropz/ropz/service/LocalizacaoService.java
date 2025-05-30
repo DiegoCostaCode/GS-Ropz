@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class LocalizacaoService {
 
-    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger log = LoggerFactory.getLogger(LocalizacaoService.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
 

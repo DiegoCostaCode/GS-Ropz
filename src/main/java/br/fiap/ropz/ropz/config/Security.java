@@ -38,13 +38,17 @@ public class Security {
                                 "/login",
                                 "/cadaster",
                                 "/css/**",
-                                "/",
                                 "/js/**",
                                 "/img/**",
                                 "/usuario/register",
                                 "/usuario/api/**",
-                                "relatorio/**"
+                                "relatorio/api/**"
                                 ).permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/usuario/update",
+                                "/usuario/delete"
+                        ).hasAnyRole("DEFAULT", "ADM")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

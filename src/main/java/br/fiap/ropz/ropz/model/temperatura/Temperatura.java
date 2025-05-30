@@ -52,8 +52,8 @@ public class Temperatura {
     private LocalDateTime dataHora;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "dados_origem")
-    private EnumOrigem dadosOrigem;
+    @Column(name = "tipo_consulta")
+    private EnumOrigem tipoConsulta;
 
     @ManyToOne
     @JoinColumn(name = "localizacao_id", referencedColumnName = "id")

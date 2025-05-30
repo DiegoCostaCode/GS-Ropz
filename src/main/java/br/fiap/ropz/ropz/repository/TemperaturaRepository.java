@@ -14,5 +14,5 @@ public interface TemperaturaRepository extends JpaRepository<Temperatura, Long> 
 
     List<Temperatura> findByLocalizacaoOrderByDataHoraDesc(Localizacao localizacao);
 
-    Optional<Temperatura> findFirstByLocalizacaoAndDadosOrigemOrderByCriadoEmDesc(Localizacao localizacao, EnumOrigem dadosOrigem);
+    Optional<Temperatura> findFirstByLocalizacaoAndTipoConsultaOrderByCriadoEmDesc(Localizacao localizacao, EnumOrigem dadosOrigem);
 }

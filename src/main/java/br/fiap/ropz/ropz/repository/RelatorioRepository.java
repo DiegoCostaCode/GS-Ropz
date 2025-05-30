@@ -15,8 +15,12 @@ public interface RelatorioRepository extends JpaRepository<Relatorio, Long> {
 
     Optional<Relatorio> findByTemperaturaId(Long temperaturaId);
 
-    List<Relatorio> findByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_DadosOrigem(Localizacao localizacao, EnumOrigem dadosOrigem);
+    List<Relatorio> findByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsultaOrderByCriadoEmDesc(Localizacao localizacao, EnumOrigem dadosOrigem);
 
-    Optional<Relatorio> findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_DadosOrigem(Localizacao localizacao, EnumOrigem dadosOrigem);
+    Optional<Relatorio> findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsulta(Localizacao localizacao, EnumOrigem dadosOrigem);
+
+//    Long countByTemperatura_DadosOrigem_CurrentAndTemperatura_Localizacao(EnumOrigem dadosOrigem, Localizacao localizacao);
+//
+//    Long countByTemperatura_DadosOrigem_ForecastAndTemperatura_Localizacao(EnumOrigem dadosOrigem, Localizacao localizacao);
 
 }

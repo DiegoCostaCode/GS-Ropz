@@ -34,4 +34,6 @@ public class Localizacao {
 
     @Column(name = "longitude", nullable = false)
     private Double longitude;
+
+
 }

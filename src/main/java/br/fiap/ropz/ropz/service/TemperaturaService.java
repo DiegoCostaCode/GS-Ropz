@@ -26,9 +26,9 @@ import java.util.Comparator;
 @Service
 public class TemperaturaService {
 
-    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger log = LoggerFactory.getLogger(TemperaturaService.class);
 
-    private static Integer tempoConsulta = 10;
+    private static Integer tempoConsulta = 2;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -42,7 +42,7 @@ public class TemperaturaService {
     @Autowired
     private TemperaturaRepository temperaturaRepository;
 
-    public Temperatura consultarTemperaturaAtual(Localizacao localizacao) {
+    public void consultarTemperaturaAtual(Localizacao localizacao) {
 
         log.info("Consultando relatorio atual para a localização: {}", localizacao.getCep());
 
@@ -51,11 +51,11 @@ public class TemperaturaService {
         if (temperatura != null) {
             Duration diferenca = Duration.between(temperatura.getDataHora(), LocalDateTime.now());
 
-            if (diferenca.toMinutes() < tempoConsulta) {
+            if (diferenca.toHours() < tempoConsulta) {
                 log.info("Consulta recente encontrada, retornando relatorio armazenada.");
-                return temperatura;
+                return;
             } else {
-                log.info("A última consulta foi realizada a {} minutos, buscando dados atualizados.", diferenca.toMinutes());
+                log.info("A última consulta foi realizada a {} horas, buscando dados atualizados.", diferenca.toMinutes());
             }
         }
 
@@ -76,10 +76,10 @@ public class TemperaturaService {
 
         TemperaturaRequestDTO temperaturaRequestDTO = criarDtoAtual(response, localizacao);
 
-        return save(temperaturaRequestDTO);
+        save(temperaturaRequestDTO);
     }
 
-    public Temperatura consultarMaiorPrevisao(Localizacao localizacao) {
+    public void consultarMaiorPrevisao(Localizacao localizacao) {
 
         log.info("Consultando previsão futura para maior temperatura em: {}", localizacao.getCep());
 
@@ -87,7 +87,7 @@ public class TemperaturaService {
 
         if (ultimaPrevisao != null && ultimaPrevisao.getDataHora().isAfter(LocalDateTime.now())) {
             log.info("Já existe uma previsão futura válida até: {}", ultimaPrevisao.getDataHora());
-            return ultimaPrevisao;
+
         }
 
         log.info("Fazendo nova requisição de forecast...");
@@ -111,7 +111,7 @@ public class TemperaturaService {
 
         TemperaturaRequestDTO temperaturaRequestDTO = criarDtoForecast(maior, localizacao);
 
-        return save(temperaturaRequestDTO);
+        save(temperaturaRequestDTO);
     }
 
     private void validarRespostaAtual(OpenWeatherResponseDTO response, Localizacao localizacao) {
@@ -129,9 +129,11 @@ public class TemperaturaService {
     }
 
     private TemperaturaRequestDTO criarDtoAtual(OpenWeatherResponseDTO response, Localizacao localizacao) {
+
         var weather = response.weather().get(0);
+
         return new TemperaturaRequestDTO(
-                weather.icon(),
+                "https://openweathermap.org/img/wn/" + weather.icon() + "@2x.png",
                 weather.main(),
                 weather.description(),
                 response.main().temp(),
@@ -151,7 +153,7 @@ public class TemperaturaService {
         var weather = maior.weather().get(0);
 
         return new TemperaturaRequestDTO(
-                weather.icon(),
+                "https://openweathermap.org/img/wn/" + weather.icon() + "@2x.png",
                 weather.main(),
                 weather.description(),
                 maior.main().temp(),
@@ -181,7 +183,7 @@ public class TemperaturaService {
         temperatura.setSensacaoTermica(temperaturaRequest.sensacaoTermica());
         temperatura.setCriadoEm(temperaturaRequest.criadoEm());
         temperatura.setDataHora(temperaturaRequest.dataHora());
-        temperatura.setDadosOrigem(temperaturaRequest.origem());
+        temperatura.setTipoConsulta(temperaturaRequest.tipoConsulta());
         temperatura.setLocalizacao(temperaturaRequest.localizacao());
 
         Temperatura temperaturaSalva = temperaturaRepository.save(temperatura);
@@ -214,9 +216,8 @@ public class TemperaturaService {
 
     public Temperatura getHistoricoRequesicoesTemperatura(Localizacao localizacao, EnumOrigem dadosOrigem) {
         log.info("Consultando a última se há uma consulta recente na mesma localização");
-        return temperaturaRepository.findFirstByLocalizacaoAndDadosOrigemOrderByCriadoEmDesc(localizacao, dadosOrigem).orElse(null);
+        return temperaturaRepository.findFirstByLocalizacaoAndTipoConsultaOrderByCriadoEmDesc(localizacao, dadosOrigem).orElse(null);
     }
-
 
 }
 

@@ -17,5 +17,5 @@ public record TemperaturaRequestDTO (
         LocalDateTime criadoEm,
         LocalDateTime dataHora,
         Localizacao localizacao,
-        EnumOrigem origem
+        EnumOrigem tipoConsulta
 ){ }

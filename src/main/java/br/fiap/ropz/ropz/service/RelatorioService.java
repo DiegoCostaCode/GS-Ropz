@@ -2,6 +2,7 @@ package br.fiap.ropz.ropz.service;
 
 import br.fiap.ropz.ropz.dto.mistral.MistralPromptResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
+import br.fiap.ropz.ropz.dto.relatorio.RelatoriosServiceDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.relatorio.Relatorio;
 import br.fiap.ropz.ropz.model.temperatura.EnumOrigem;
@@ -19,7 +20,7 @@ import java.util.List;
 @Service
 public class RelatorioService {
 
-    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger log = LoggerFactory.getLogger(RelatorioService.class);
 
     @Autowired
     private RelatorioRepository relatorioRepository;
@@ -70,7 +71,7 @@ public class RelatorioService {
     public List<Relatorio> getRelatorioOrigemCurrent(Localizacao localizacao) {
         log.info("Trazendo os 4 últimos registros de relatorio para a localização: {}", localizacao.getCep());
 
-         return relatorioRepository.findByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_DadosOrigem(localizacao, EnumOrigem.CURRENT)
+         return relatorioRepository.findByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsultaOrderByCriadoEmDesc(localizacao, EnumOrigem.CURRENT)
                 .stream()
                 .limit(4)
                 .toList();
@@ -79,6 +80,46 @@ public class RelatorioService {
     public Relatorio getRelatorioOrigemForecast(Localizacao localizacao) {
         log.info("Trazendo relatorio de previsão: {}", localizacao.getCep());
 
-        return relatorioRepository.findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_DadosOrigem(localizacao, EnumOrigem.FORECAST).orElse(null);
+        return relatorioRepository.findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsulta(localizacao, EnumOrigem.FORECAST).orElse(null);
+    }
+
+    public RelatoriosServiceDTO getRelatorios(Localizacao localizacao) {
+
+        int tentativas = 0;
+        int esperar = 2000;
+        int limiteTentativas = 10;
+
+        log.info("Buscando dados da tela de relatórios");
+
+        while (tentativas < limiteTentativas) {
+
+            log.info("Tentativa {} de {} para buscar relatórios de temperatura.", tentativas + 1, limiteTentativas);
+
+            List<Relatorio> listaRelatoriosCurrent = getRelatorioOrigemCurrent(localizacao);
+            Relatorio relatorioForecast = getRelatorioOrigemForecast(localizacao);
+
+            boolean temAtual = listaRelatoriosCurrent != null && !listaRelatoriosCurrent.isEmpty();
+            boolean temForecast = relatorioForecast != null;
+
+            if (temAtual && temForecast) {
+                log.info("Relatórios de temperatura encontrados!");
+                Relatorio relatorioMaisRecente = listaRelatoriosCurrent.get(0);
+                return new RelatoriosServiceDTO(listaRelatoriosCurrent, relatorioForecast, relatorioMaisRecente );
+            }
+
+            try {
+                log.warn("Aguardando {} milissegundos antes da próxima tentativa...", esperar);
+                Thread.sleep(esperar);
+            } catch (InterruptedException e) {
+                log.error("Erro ao aguardar entre as tentativas: {}", e.getMessage());
+                Thread.currentThread().interrupt();
+                break;
+            }
+
+            tentativas++;
+        }
+
+        log.warn("Não foi possível obter todos os relatórios após {} tentativas.", limiteTentativas);
+        return null;
     }
 }

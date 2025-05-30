@@ -29,25 +29,33 @@
           <p> Lat. <span th:text="${lat}"></span> Long. <span th:text="${long}"></span></p>
         </div>
 
-        <div class="div-alerta-prompt">
+        <div class="div-alerta-prompt" th:if="${relatorioTempForecast != null}" th:object="${relatorioTempForecast}">
           <div>
             <h3 th:text="#{h3.alert.prompt}" style="width: 320px"></h3>
-              <div class="container-weather-line">
-                <span th:text="${#temporals.format(temperaturaAlta.temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
-                <span th:text="${#numbers.formatDecimal(temperaturaAlta.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
+              <div class="container-weather-line" >
+                
+                <span th:text="*{#temporals.format(temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
+                <span th:text="*{#numbers.formatDecimal(temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
                 <img class="open-weather-icon"
-                     th:if="${temperaturaAlta.temperatura.icon} != null"
-                     th:src="'https://openweathermap.org/img/wn/' + ${temperaturaAlta.temperatura.icon} + '@2x.png'"
+                     th:if="*{temperatura.icon} != null"
+                     th:src="*{temperatura.icon}"
                      alt="ícone do tempo" />
-                <span th:text="${temperaturaAlta.classificacao.getDescricao()}"></span>
+                <span th:text="*{classificacao.getDescricao()}"></span>
               </div>
           </div>
 
           <div>
             <h3 th:text="#{h3.alert.prompt.ia}"></h3>
-            <p th:text="${temperaturaAlta.mensagem}"></p>
+            <p th:text="*{mensagem}"></p>
           </div>
 
+        </div>
+
+        <div class="div-alerta-prompt" th:if="${relatorioTempForecast == null}" >
+          <div class="div-erro-msgs">
+            <h3 class="h3-error-msg" th:text="#{error.alert.prompt}"> </h3>
+            <p th:text="#{error.temp.recomend}"></p>
+          </div>
         </div>
 
         <div class="div-info">
@@ -78,13 +86,14 @@
       </section>
       <aside>
 
-        <div class="div-aside-clima" th:object="${relatorioTempAtual}">
+        <div class="div-aside-clima" th:if="${relatorioTempAtual != null}" th:object="${relatorioTempAtual}">
           <section class="temp-atual">
             <div class="div-weather-info">
               <img class="open-weather-icon"
-                   th:if="${relatorioTempAtual.temperatura.icon} != null"
-                   th:src="'https://openweathermap.org/img/wn/' + *{temperatura.icon} + '@2x.png'"
+                   th:src="*{temperatura.icon}"
                    alt="ícone do tempo" />
+
+              <h2 th:text="*{temperatura.getDescricao()}" style="text-transform: capitalize"></h2>
             </div>
 
             <div class="div-celsius-value">
@@ -127,17 +136,32 @@
 
         </div>
 
+        <div class="div-aside-clima" th:if="${relatorioTempAtual == null}" th:object="${relatorioTempAtual}">
+          <div class="div-erro-msgs">
+            <h3 class="h3-error-msg" th:text="#{error.current.temp}"> </h3>
+            <p th:text="#{error.temp.recomend}"></p>
+          </div>
+        </div>
+
+
+
         <div class="div-history">
           <ul>
-            <li class="container-weather-line" th:each="historico : ${historicoTemperatura}">
-              <span th:text="${#temporals.format(historico.temperatura.dataHora, 'dd/MM/yyyy HH:mm')}"></span> -
+            <li class="container-weather-line" th:if="${historicoTemperatura != null}" th:each="historico : ${historicoTemperatura}">
+              <span th:text="${#temporals.format(historico.temperatura.dataHora, 'dd/MM/yyyy HH:mm:ss')}"></span> -
               <span th:text="${#numbers.formatDecimal(historico.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
               <img class="open-weather-icon"
                    th:if="${historico.temperatura.icon} != null"
-                   th:src="'https://openweathermap.org/img/wn/' + ${historico.temperatura.icon} + '@2x.png'"
+                   th:src="${historico.temperatura.icon}"
                    alt="ícone do tempo" />
               <span th:text="${historico.classificacao.getDescricao()}"></span>
             </li>
+
+            <div class="div-erro-msgs" th:if="${historicoTemperatura == null}">
+              <h3 class="h3-error-msg" th:text="#{error.current.temp.history}"> </h3>
+              <p th:text="#{error.temp.recomend}"></p>
+            </div>
+
           </ul>
 
         </div>
@@ -146,8 +170,8 @@
     </div>
   </main>
   <footer class="footer-cls">
-      <a href="?lang=pt_BR" class="link-href">Br</a>
-      <a href="?lang=en" class="link-href">En</a>
+      <a href="?lang=pt_BR" class="link-href">BR</a>
+      <a href="?lang=en" class="link-href">EN</a>
   </footer>
 </body>
 </html>

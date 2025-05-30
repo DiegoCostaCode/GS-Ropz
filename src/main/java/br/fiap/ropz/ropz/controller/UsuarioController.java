@@ -46,26 +46,7 @@ public class UsuarioController {
         Localizacao localizacao = usuario.getLocalizacao();
 
         temperaturaService.consultarTemperaturaAtual(localizacao);
-
         temperaturaService.consultarMaiorPrevisao(localizacao);
-
-        relatorioService.getRelatorioOrigemForecast(localizacao);
-
-        relatorioService.getRelatorioOrigemCurrent(localizacao);
-
-        int tentativas = 10;
-        int esperar = 2000;
-
-        while (relatorioService.getRelatorioOrigemForecast(localizacao) == null && tentativas < esperar) {
-            try {
-                Thread.sleep(esperar);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-            tentativas++;
-        }
-
 
         return "redirect:/login";
     }

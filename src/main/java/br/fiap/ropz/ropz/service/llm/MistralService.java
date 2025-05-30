@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 public class MistralService {
 
@@ -42,7 +44,7 @@ public class MistralService {
     }
 
     public String gerarPrompt(TemperaturaResponseDTO temperaturaResponseDTO) {
-
+        log.info("Gerando prompt para análise de temperatura: {}", temperaturaResponseDTO.id());
         return String.format(
             """
                 Você é um especialista de clima que trabalha para um programa chamado ROPZ, ou Rede de Observação e Previsão de Zonas Quentes.
