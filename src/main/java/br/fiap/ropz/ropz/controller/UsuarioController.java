@@ -57,30 +57,11 @@ public class UsuarioController {
 
         Usuario usuario = user.getUsuario();
 
-        Usuario usuarioSalvo = usuarioService.update(usuario, userRequestDTO);
+        Usuario usuarioSalvo = usuarioService.update(usuario.getId(), userRequestDTO);
 
         Localizacao localizacao = usuarioSalvo.getLocalizacao();
 
-        temperaturaService.consultarTemperaturaAtual(localizacao);
-
-        temperaturaService.consultarMaiorPrevisao(localizacao);
-
-        relatorioService.getRelatorioOrigemForecast(localizacao);
-
-        relatorioService.getRelatorioOrigemCurrent(localizacao);
-
-        int tentativas = 10;
-        int esperar = 2000;
-
-        while (relatorioService.getRelatorioOrigemForecast(localizacao) == null && tentativas < esperar) {
-            try {
-                Thread.sleep(esperar);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-            tentativas++;
-        }
+        relatorioService.getRelatorios(localizacao);
 
         return "redirect:/";
     }
@@ -95,7 +76,6 @@ public class UsuarioController {
 
         return "redirect:/cadaster";
     }
-
 
     @PostMapping(value = "/api/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsuarioResponseDTO> saveApi(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO) {
@@ -142,6 +122,18 @@ public class UsuarioController {
         usuarioService.deleteById(idUsuario);
 
         return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/api/{idUsuario}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateApi(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO,
+                                                       @PathVariable Long idUsuario) {
+        log.info("Recebida requisição PUT /api/ para atualizar cadastro do usuário: {}", usuarioRequestDTO.getEmail());
+
+        Usuario usuario = usuarioService.update(idUsuario, usuarioRequestDTO);
+
+        log.info("Usuário atualizado com sucesso: ID {}", usuario.getId());
+
+        return ResponseEntity.noContent().build();
     }
 }
 

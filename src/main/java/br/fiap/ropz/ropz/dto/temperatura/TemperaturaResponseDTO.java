@@ -1,5 +1,7 @@
 package br.fiap.ropz.ropz.dto.temperatura;
 
+import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoResponseDTO;
+
 public record TemperaturaResponseDTO(
         Long id,
         String icon,
@@ -10,7 +12,7 @@ public record TemperaturaResponseDTO(
         Double temperaturaMinima,
         Double sensacaoTermica,
         Integer umidade,
-        Long localizacaoId,
+        LocalizacaoResponseDTO localizacao,
         String dataHora
 ) {
 }

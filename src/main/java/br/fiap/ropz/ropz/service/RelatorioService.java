@@ -1,5 +1,6 @@
 package br.fiap.ropz.ropz.service;
 
+import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoResponseDTO;
 import br.fiap.ropz.ropz.dto.mistral.MistralPromptResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatoriosServiceDTO;
@@ -28,6 +29,8 @@ public class RelatorioService {
 
     @Autowired
     private TemperaturaService temperaturaService;
+    @Autowired
+    private LocalizacaoService localizacaoService;
 
     public Relatorio saveRelatorioIA(MistralPromptResponseDTO mistralPromptResponseDTO)
     {
@@ -88,7 +91,7 @@ public class RelatorioService {
     public RelatoriosServiceDTO getRelatorios(Localizacao localizacao) {
 
         int tentativas = 0;
-        int esperar = 2000;
+        int esperar = 1500;
         int limiteTentativas = 10;
 
         log.info("Buscando dados da tela de relatórios");
@@ -122,6 +125,6 @@ public class RelatorioService {
         }
 
         log.warn("Não foi possível obter todos os relatórios após {} tentativas.", limiteTentativas);
-        return null;
+        return new RelatoriosServiceDTO(null,null,null) ;
     }
 }

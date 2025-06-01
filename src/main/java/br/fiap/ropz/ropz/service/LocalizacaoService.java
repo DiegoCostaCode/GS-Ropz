@@ -1,6 +1,7 @@
 package br.fiap.ropz.ropz.service;
 
 import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoDTO;
+import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoResponseDTO;
 import br.fiap.ropz.ropz.dto.localizacao.NominatimResponse;
 import br.fiap.ropz.ropz.dto.localizacao.ViaCepResponse;
 import br.fiap.ropz.ropz.model.Localizacao;
@@ -18,7 +19,8 @@ public class LocalizacaoService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalizacaoService.class);
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private LocalizacaoRepository localizacaoRepository;
@@ -91,11 +93,33 @@ public class LocalizacaoService {
         localizacao.setLatitude(localizacaoDTO.getLatitude());
         localizacao.setLongitude(localizacaoDTO.getLongitude());
 
+        Localizacao newLocalizacao = localizacaoRepository.save(localizacao);
+
+        if (newLocalizacao == null) {
+            log.error("Erro ao salvar localização: {}", localizacao);
+            throw new RuntimeException("Erro ao salvar localização");
+        }
+
         return localizacaoRepository.save(localizacao);
+    }
+
+    public LocalizacaoResponseDTO localizacaoResponseDTO(Localizacao localizacao) {
+        log.info("Convertendo Localizacao para LocalizacaoResponseDTO");
+
+        return new LocalizacaoResponseDTO(
+            localizacao.getId(),
+            localizacao.getCep(),
+            localizacao.getBairro(),
+            localizacao.getCidade(),
+            localizacao.getEstado(),
+            localizacao.getLatitude(),
+            localizacao.getLongitude()
+        );
     }
 
     public Localizacao findById(Long id) {
         log.info("Consultando localização por ID: {}", id);
-        return localizacaoRepository.findById(id).orElse(null);
+        return localizacaoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Nenhuma localização encontrada com o ID: " + id));
     }
 }

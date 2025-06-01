@@ -1,5 +1,6 @@
 package br.fiap.ropz.ropz.service;
 
+import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoResponseDTO;
 import br.fiap.ropz.ropz.dto.temperatura.OpenWeatherForecastResponseDTO;
 import br.fiap.ropz.ropz.dto.temperatura.OpenWeatherResponseDTO;
 import br.fiap.ropz.ropz.dto.temperatura.TemperaturaRequestDTO;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,6 +44,11 @@ public class TemperaturaService {
     @Autowired
     private TemperaturaRepository temperaturaRepository;
 
+    @Autowired
+    @Lazy
+    private LocalizacaoService localizacaoService;
+
+
     public void consultarTemperaturaAtual(Localizacao localizacao) {
 
         log.info("Consultando relatorio atual para a localização: {}", localizacao.getCep());
@@ -60,6 +67,7 @@ public class TemperaturaService {
         }
 
         log.info("Nenhuma consulta recente encontrada, buscando dados do OpenWeatherMap.");
+
 
         String url = String.format(
                 "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&units=metric&lang=pt_br&appid=%s",
@@ -169,7 +177,7 @@ public class TemperaturaService {
     }
 
     public Temperatura save(TemperaturaRequestDTO temperaturaRequest) {
-        log.info("Salvando a relatorio atual");
+        log.info("Salvando a temperatura atual");
 
         Temperatura temperatura = new Temperatura();
 
@@ -188,30 +196,16 @@ public class TemperaturaService {
 
         Temperatura temperaturaSalva = temperaturaRepository.save(temperatura);
 
-        temperaturaProducer.enviarParaAnalise(temperaturaMensagemDTO(temperaturaSalva));
+        temperaturaProducer.enviarParaAnalise(temperaturaToResponse(temperaturaSalva));
 
         return temperaturaSalva;
     }
 
-    public TemperaturaResponseDTO temperaturaMensagemDTO(Temperatura temperatura) {
-        return new TemperaturaResponseDTO(
-                temperatura.getId(),
-                temperatura.getIcon(),
-                temperatura.getTempo(),
-                temperatura.getDescricao(),
-                temperatura.getTemperatura(),
-                temperatura.getTemperaturaMinima(),
-                temperatura.getTemperaturaMaxima(),
-                temperatura.getSensacaoTermica(),
-                temperatura.getUmidade(),
-                temperatura.getLocalizacao().getId(),
-                temperatura.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-        );
-    }
-
     public Temperatura findById(Long id) {
         log.info("Buscando relatorio por ID: {}", id);
-        return temperaturaRepository.findById(id).orElse(null);
+
+        return temperaturaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Temperatura não encontrada para o ID: " + id));
     }
 
     public Temperatura getHistoricoRequesicoesTemperatura(Localizacao localizacao, EnumOrigem dadosOrigem) {
@@ -220,7 +214,9 @@ public class TemperaturaService {
     }
 
     public TemperaturaResponseDTO temperaturaToResponse(Temperatura temperatura) {
-        log.info("Convertendo relatorio para DTO de resposta");
+        log.info("Convertendo temperatura para DTO de resposta");
+
+        LocalizacaoResponseDTO localResponse = localizacaoService.localizacaoResponseDTO(temperatura.getLocalizacao());
 
         return new TemperaturaResponseDTO(
                 temperatura.getId(),
@@ -232,7 +228,7 @@ public class TemperaturaService {
                 temperatura.getTemperaturaMaxima(),
                 temperatura.getSensacaoTermica(),
                 temperatura.getUmidade(),
-                temperatura.getLocalizacao().getId(),
+                localResponse,
                 temperatura.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
         );
     }

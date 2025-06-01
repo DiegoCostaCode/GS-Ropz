@@ -31,7 +31,7 @@ public class LLMConsumer {
 
         if (mistralResponse == null) {
             log.error("Erro ao analisar relatorio com Mistral.");
-            return;
+            throw new RuntimeException("Erro ao analisar relatorio.");
         }
 
         log.info("Relatorio analisado com sucesso: {}", mistralResponse);

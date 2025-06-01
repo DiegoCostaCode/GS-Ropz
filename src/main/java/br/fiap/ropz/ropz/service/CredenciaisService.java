@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +69,7 @@ public class CredenciaisService {
         } else if (senha != null && !senha.isBlank() && passwordEncoder.matches(senha, credenciais.getSenha())) {
             credenciais.setSenha(usuario.getCredenciais().getSenha());
         } else if (senha == null || senha.isBlank()) {
-            throw new IllegalArgumentException("Senha inválida!");
+            throw new BadCredentialsException("Senha inválida!");
         }
 
         return credenciaisRepository.save(credenciais);
