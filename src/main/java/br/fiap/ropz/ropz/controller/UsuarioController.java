@@ -59,10 +59,6 @@ public class UsuarioController {
 
         Usuario usuarioSalvo = usuarioService.update(usuario.getId(), userRequestDTO);
 
-        Localizacao localizacao = usuarioSalvo.getLocalizacao();
-
-        relatorioService.getRelatorios(localizacao);
-
         return "redirect:/";
     }
 

@@ -45,12 +45,7 @@ public class HomeController {
 
         RelatoriosServiceDTO relatorios = relatorioService.getRelatorios(localizacao);
 
-        model.addAttribute("idLocalizacao", localizacao.getId());
-        model.addAttribute("cidade", localizacao.getCidade());
-        model.addAttribute("estado", localizacao.getEstado());
-        model.addAttribute("lat", localizacao.getLatitude());
-        model.addAttribute("long", localizacao.getLongitude());
-
+        model.addAttribute("localizacao", localizacao);
         model.addAttribute("usuarioRequestDTO", usuarioRequest);
 
         model.addAttribute("temperaturaAtualLocal", relatorios.relatorioMaisRecente());

@@ -21,12 +21,13 @@
     </header>
     <div>
       <section>
-        <div class="div-localizacao">
+
+        <div class="div-localizacao" th:object="${localizacao}">
           <h3>
             <span class="material-icons" style="font-size: 18px; vertical-align: middle;">location_on</span>
-            <span th:text="${cidade}"></span>,<span th:text="${estado}"></span>
+            <span th:text="*{cidade}" style="margin-right: 2px"></span>,<span th:text="*{estado}" style="margin-right: 2px"></span> - <span th:text="*{cep}" style="margin-left: 2px"></span>
           </h3>
-          <p> Lat. <span th:text="${lat}"></span> Long. <span th:text="${long}"></span></p>
+          <p> Lat. <span th:text="*{latitude}"></span> Long. <span th:text="*{longitude}"></span></p>
         </div>
 
         <div class="div-alerta-prompt" th:if="${previsaoLocal != null}" th:object="${previsaoLocal}">
@@ -51,7 +52,7 @@
 
         </div>
 
-        <div class="div-alerta-prompt" th:if="${relatorioTempForecast == null}" >
+        <div class="div-alerta-prompt" th:if="${previsaoLocal == null}" >
           <div class="div-erro-msgs">
             <h3 class="h3-error-msg" th:text="#{error.alert.prompt}"> </h3>
             <p th:text="#{error.temp.recomend}"></p>
@@ -152,15 +153,15 @@
                    th:if="${historico.temperatura.icon} != null"
                    th:src="${historico.temperatura.icon}"
                    alt="ícone do tempo" />
-              <span th:text="${historico.temperatura.localizacao.getCep()}"></span>
+              <span th:text="${historico.classificacao.getDescricao()}"></span>
             </li>
 
-            <div class="div-erro-msgs" th:if="${historicoLocal == null}">
-              <h3 class="h3-error-msg" th:text="#{error.current.temp.history}"> </h3>
-              <p th:text="#{error.temp.recomend}"></p>
-            </div>
-
           </ul>
+
+          <div class="div-erro-msgs" th:if="${#lists.isEmpty(historicoLocal)}">
+            <h3 class="h3-error-msg" th:text="#{error.current.temp.history}"> </h3>
+            <p th:text="#{error.temp.recomend}"></p>
+          </div>
 
         </div>
 
