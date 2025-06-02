@@ -64,7 +64,8 @@ public class TemperaturaService {
             log.info("Fazendo nova consulta ao OpenWeatherMap.");
 
             String url = montarUrl("current", localizacao.getLatitude(), localizacao.getLongitude());
-            OpenWeatherResponseDTO response = buscarDadosClima(url, OpenWeatherResponseDTO.class);
+
+            OpenWeatherResponseDTO response = restTemplate.getForObject(url, OpenWeatherResponseDTO.class);
 
             validarRespostaAtual(response, localizacao);
 
@@ -83,13 +84,14 @@ public class TemperaturaService {
             log.info("Consultando maior previsão para o CEP: {}", localizacao.getCep());
 
             Temperatura previsao = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.FORECAST);
+
             if (previsao != null && previsao.getDataHora().isAfter(LocalDateTime.now())) {
                 log.info("Previsão futura válida já existente: {}", previsao.getDataHora());
                 return;
             }
 
             String url = montarUrl("forecast", localizacao.getLatitude(), localizacao.getLongitude());
-            OpenWeatherForecastResponseDTO forecast = buscarDadosClima(url, OpenWeatherForecastResponseDTO.class);
+            OpenWeatherForecastResponseDTO forecast = restTemplate.getForObject(url, OpenWeatherForecastResponseDTO.class);
 
             validarRespostaForecast(forecast, localizacao);
 
@@ -110,10 +112,6 @@ public class TemperaturaService {
         String endpoint = tipo.equals("current") ? "weather" : "forecast";
 
         return String.format("https://api.openweathermap.org/data/2.5/%s?lat=%f&lon=%f&units=metric&lang=pt_br&appid=%s", endpoint, lat, lon, apiKey);
-    }
-
-    private <T> T buscarDadosClima(String url, Class<T> responseType) {
-        return restTemplate.getForObject(url, responseType);
     }
 
     private boolean isConsultaRecente(Temperatura temperatura) {

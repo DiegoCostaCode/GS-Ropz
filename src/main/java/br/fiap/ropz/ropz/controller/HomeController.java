@@ -5,12 +5,14 @@ import br.fiap.ropz.ropz.dto.usuario.UsuarioRequestDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.Usuario;
 import br.fiap.ropz.ropz.model.usuario.UsuarioDetails;
+import br.fiap.ropz.ropz.service.LocalizacaoService;
 import br.fiap.ropz.ropz.service.RelatorioService;
 import br.fiap.ropz.ropz.service.TemperaturaService;
 import br.fiap.ropz.ropz.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,15 +30,18 @@ public class HomeController {
     private UsuarioService usuarioService;
 
     @Autowired
-    private TemperaturaService temperaturaService;
+    private LocalizacaoService localizacaoService;
 
     @GetMapping("/")
     public String home(@AuthenticationPrincipal UsuarioDetails user, Model model) {
 
-        Usuario usuario = user.getUsuario();
-        UsuarioRequestDTO usuarioRequest = usuarioService.usuarioRequestDTO(usuario.getId());
+        Usuario usuarioEncontrado = usuarioService.getById(user.getUsuario().getId());
 
-        Localizacao localizacao = usuario.getLocalizacao();
+        log.info("Acessando a página inicial do usuário: {} - CEP: {}", user.getUsername(), usuarioEncontrado.getLocalizacao().getCep());
+
+        Localizacao localizacao = localizacaoService.findById(usuarioEncontrado.getLocalizacao().getId());
+
+        UsuarioRequestDTO usuarioRequest = usuarioService.usuarioRequestDTO(usuarioEncontrado.getId());
 
         RelatoriosServiceDTO relatorios = relatorioService.getRelatorios(localizacao);
 
@@ -48,9 +53,9 @@ public class HomeController {
 
         model.addAttribute("usuarioRequestDTO", usuarioRequest);
 
-        model.addAttribute("relatorioTempAtual", relatorios.relatorioMaisRecente());
-        model.addAttribute("historicoTemperatura", relatorios.relatoriosCurrent());
-        model.addAttribute("relatorioTempForecast", relatorios.relatorioForecast());
+        model.addAttribute("temperaturaAtualLocal", relatorios.relatorioMaisRecente());
+        model.addAttribute("historicoLocal", relatorios.relatoriosCurrent());
+        model.addAttribute("previsaoLocal", relatorios.relatorioForecast());
 
         return "home";
     }

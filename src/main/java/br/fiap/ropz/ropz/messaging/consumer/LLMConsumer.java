@@ -25,7 +25,10 @@ public class LLMConsumer {
     @RabbitListener(queues = "${app.rabbitmq.queue}")
     public void receber(TemperaturaResponseDTO temperaturaResponseDTO) {
 
-        log.info("Recebendo relatorio para análise");
+        log.info("Recebendo relatorio para análise {} - CEP {}",
+                temperaturaResponseDTO.id(),
+                temperaturaResponseDTO.localizacao().cep()
+        );
 
         MistralPromptResponseDTO mistralResponse = mistralService.analisarRelatorio(temperaturaResponseDTO);
 

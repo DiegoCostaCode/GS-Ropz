@@ -125,15 +125,17 @@ public class UsuarioController {
     }
 
     @PutMapping(value = "/api/{idUsuario}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateApi(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO,
+    public ResponseEntity<UsuarioResponseDTO> updateApi(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO,
                                                        @PathVariable Long idUsuario) {
         log.info("Recebida requisição PUT /api/ para atualizar cadastro do usuário: {}", usuarioRequestDTO.getEmail());
 
         Usuario usuario = usuarioService.update(idUsuario, usuarioRequestDTO);
 
+        UsuarioResponseDTO usuarioResponseDTO = usuarioService.usuarioResponse(usuario);
+
         log.info("Usuário atualizado com sucesso: ID {}", usuario.getId());
 
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(usuarioResponseDTO, HttpStatus.OK);
     }
 }
 

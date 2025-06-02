@@ -6,6 +6,7 @@ import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.relatorio.Relatorio;
 import br.fiap.ropz.ropz.service.LocalizacaoService;
 import br.fiap.ropz.ropz.service.RelatorioService;
+import br.fiap.ropz.ropz.service.TemperaturaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,9 @@ public class RelatorioController {
 
     @Autowired
     private LocalizacaoService localizacaoService;
+
+    @Autowired
+    private TemperaturaService temperaturaService;
 
     @GetMapping(value = "/api/temperatura/{idTemperatura}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RelatorioResponseDTO> getRelatorioByTemperaturaId(@PathVariable  Long idTemperatura) {
@@ -67,10 +71,6 @@ public class RelatorioController {
     public ResponseEntity<RelatorioResponseDTO> getMaiorTemperaturaAFrente(@PathVariable  Long idLocalizacao) {
 
         Localizacao localizacao = localizacaoService.findById(idLocalizacao);
-
-        if (localizacao == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         Relatorio relatorio = relatorioService.getRelatorioOrigemForecast(localizacao);
 

@@ -99,6 +99,8 @@ public class UsuarioService {
     public UsuarioResponseDTO usuarioResponse(Usuario usuario) {
         log.info("Convertendo usuário para DTO: {}", usuario.getNome());
 
+        System.out.println("Convertendo usuário para DTO: " + usuario.getLocalizacao().getCep());
+
         LocalizacaoResponseDTO localizacaoResponseDTO = localizacaoService.localizacaoResponseDTO(usuario.getLocalizacao());
 
         return new UsuarioResponseDTO(

@@ -95,7 +95,6 @@ public class RelatorioService {
         temperaturaService.consultarTemperaturaAtual(localizacao);
         temperaturaService.consultarMaiorPrevisao(localizacao);
 
-        // Busca dados disponíveis imediatamente
         List<Relatorio> historico = getRelatorioOrigemCurrent(localizacao);
 
         Relatorio forecast = getRelatorioOrigemForecast(localizacao);

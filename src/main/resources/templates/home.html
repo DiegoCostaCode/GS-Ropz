@@ -29,7 +29,7 @@
           <p> Lat. <span th:text="${lat}"></span> Long. <span th:text="${long}"></span></p>
         </div>
 
-        <div class="div-alerta-prompt" th:if="${relatorioTempForecast != null}" th:object="${relatorioTempForecast}">
+        <div class="div-alerta-prompt" th:if="${previsaoLocal != null}" th:object="${previsaoLocal}">
           <div>
             <h3 th:text="#{h3.alert.prompt}" style="width: 320px"></h3>
               <div class="container-weather-line" >
@@ -86,7 +86,7 @@
       </section>
       <aside>
 
-        <div class="div-aside-clima" th:if="${relatorioTempAtual != null}" th:object="${relatorioTempAtual}">
+        <div class="div-aside-clima" th:if="${temperaturaAtualLocal != null}" th:object="${temperaturaAtualLocal}">
           <section class="temp-atual">
             <div class="div-weather-info">
               <img class="open-weather-icon"
@@ -136,28 +136,26 @@
 
         </div>
 
-        <div class="div-aside-clima" th:if="${relatorioTempAtual == null}" th:object="${relatorioTempAtual}">
+        <div class="div-aside-clima" th:if="${temperaturaAtualLocal == null}" th:object="${temperaturaAtualLocal}">
           <div class="div-erro-msgs">
             <h3 class="h3-error-msg" th:text="#{error.current.temp}"> </h3>
             <p th:text="#{error.temp.recomend}"></p>
           </div>
         </div>
 
-
-
         <div class="div-history">
           <ul>
-            <li class="container-weather-line" th:if="${historicoTemperatura != null}" th:each="historico : ${historicoTemperatura}">
+            <li class="container-weather-line" th:if="${historicoLocal != null}" th:each="historico : ${historicoLocal}">
               <span th:text="${#temporals.format(historico.temperatura.dataHora, 'dd/MM/yyyy HH:mm:ss')}"></span> -
               <span th:text="${#numbers.formatDecimal(historico.temperatura.temperaturaMaxima, 1, 0)} + '°C'"></span>
               <img class="open-weather-icon"
                    th:if="${historico.temperatura.icon} != null"
                    th:src="${historico.temperatura.icon}"
                    alt="ícone do tempo" />
-              <span th:text="${historico.classificacao.getDescricao()}"></span>
+              <span th:text="${historico.temperatura.localizacao.getCep()}"></span>
             </li>
 
-            <div class="div-erro-msgs" th:if="${historicoTemperatura == null}">
+            <div class="div-erro-msgs" th:if="${historicoLocal == null}">
               <h3 class="h3-error-msg" th:text="#{error.current.temp.history}"> </h3>
               <p th:text="#{error.temp.recomend}"></p>
             </div>
