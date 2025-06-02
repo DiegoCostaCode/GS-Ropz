@@ -10,3 +10,4 @@ function formatarCep(input) {
     cep = cep.replace(/^(\d{5})(\d)/, '$1-$2');
     input.value = cep;
 }
+

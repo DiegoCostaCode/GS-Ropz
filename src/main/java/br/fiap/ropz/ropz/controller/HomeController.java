@@ -38,9 +38,6 @@ public class HomeController {
 
         Localizacao localizacao = usuario.getLocalizacao();
 
-        temperaturaService.consultarTemperaturaAtual(localizacao);
-        temperaturaService.consultarMaiorPrevisao(localizacao);
-
         RelatoriosServiceDTO relatorios = relatorioService.getRelatorios(localizacao);
 
         model.addAttribute("idLocalizacao", localizacao.getId());

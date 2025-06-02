@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RelatorioService {
@@ -90,41 +92,19 @@ public class RelatorioService {
 
     public RelatoriosServiceDTO getRelatorios(Localizacao localizacao) {
 
-        int tentativas = 0;
-        int esperar = 1500;
-        int limiteTentativas = 10;
+        temperaturaService.consultarTemperaturaAtual(localizacao);
+        temperaturaService.consultarMaiorPrevisao(localizacao);
 
-        log.info("Buscando dados da tela de relatórios");
+        // Busca dados disponíveis imediatamente
+        List<Relatorio> historico = getRelatorioOrigemCurrent(localizacao);
 
-        while (tentativas < limiteTentativas) {
+        Relatorio forecast = getRelatorioOrigemForecast(localizacao);
 
-            log.info("Tentativa {} de {} para buscar relatórios de temperatura.", tentativas + 1, limiteTentativas);
+        Relatorio maisRecente = historico.stream()
+                .max(Comparator.comparing(r -> r.getTemperatura().getDataHora()))
+                .orElse(null);
 
-            List<Relatorio> listaRelatoriosCurrent = getRelatorioOrigemCurrent(localizacao);
-            Relatorio relatorioForecast = getRelatorioOrigemForecast(localizacao);
-
-            boolean temAtual = listaRelatoriosCurrent != null && !listaRelatoriosCurrent.isEmpty();
-            boolean temForecast = relatorioForecast != null;
-
-            if (temAtual && temForecast) {
-                log.info("Relatórios de temperatura encontrados!");
-                Relatorio relatorioMaisRecente = listaRelatoriosCurrent.get(0);
-                return new RelatoriosServiceDTO(listaRelatoriosCurrent, relatorioForecast, relatorioMaisRecente );
-            }
-
-            try {
-                log.warn("Aguardando {} milissegundos antes da próxima tentativa...", esperar);
-                Thread.sleep(esperar);
-            } catch (InterruptedException e) {
-                log.error("Erro ao aguardar entre as tentativas: {}", e.getMessage());
-                Thread.currentThread().interrupt();
-                break;
-            }
-
-            tentativas++;
-        }
-
-        log.warn("Não foi possível obter todos os relatórios após {} tentativas.", limiteTentativas);
-        return new RelatoriosServiceDTO(null,null,null) ;
+        return new RelatoriosServiceDTO(historico, forecast, maisRecente);
     }
+
 }

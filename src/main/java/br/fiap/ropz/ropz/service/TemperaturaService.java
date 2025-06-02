@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -48,78 +49,77 @@ public class TemperaturaService {
     @Lazy
     private LocalizacaoService localizacaoService;
 
-
+    @Async
     public void consultarTemperaturaAtual(Localizacao localizacao) {
+        try {
+            log.info("Consultando relatório atual para o CEP: {}", localizacao.getCep());
 
-        log.info("Consultando relatorio atual para a localização: {}", localizacao.getCep());
+            Temperatura temperatura = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.CURRENT);
 
-        Temperatura temperatura = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.CURRENT);
-
-        if (temperatura != null) {
-            Duration diferenca = Duration.between(temperatura.getDataHora(), LocalDateTime.now());
-
-            if (diferenca.toHours() < tempoConsulta) {
-                log.info("Consulta recente encontrada, retornando relatorio armazenada.");
+            if (isConsultaRecente(temperatura)) {
+                log.info("Consulta recente encontrada. Retornando relatório armazenado.");
                 return;
-            } else {
-                log.info("A última consulta foi realizada a {} horas, buscando dados atualizados.", diferenca.toMinutes());
             }
+
+            log.info("Fazendo nova consulta ao OpenWeatherMap.");
+
+            String url = montarUrl("current", localizacao.getLatitude(), localizacao.getLongitude());
+            OpenWeatherResponseDTO response = buscarDadosClima(url, OpenWeatherResponseDTO.class);
+
+            validarRespostaAtual(response, localizacao);
+
+            save(criarDtoAtual(response, localizacao));
+
+            log.info("Dados do clima atual salvos com sucesso.");
+        } catch (Exception e) {
+            log.error("Erro ao consultar temperatura atual para {}: {}", localizacao.getCep(), e.getMessage(), e);
+            throw new RuntimeException("Erro ao consultar temperatura atual.", e);
         }
-
-        log.info("Nenhuma consulta recente encontrada, buscando dados do OpenWeatherMap.");
-
-
-        String url = String.format(
-                "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&units=metric&lang=pt_br&appid=%s",
-                localizacao.getLatitude(),
-                localizacao.getLongitude(),
-                apiKey
-        );
-
-        OpenWeatherResponseDTO response = restTemplate.getForObject(url, OpenWeatherResponseDTO.class);
-
-        validarRespostaAtual(response, localizacao);
-
-        log.info("Dados do clima obtidos com sucesso");
-
-        TemperaturaRequestDTO temperaturaRequestDTO = criarDtoAtual(response, localizacao);
-
-        save(temperaturaRequestDTO);
     }
 
+    @Async
     public void consultarMaiorPrevisao(Localizacao localizacao) {
+        try {
+            log.info("Consultando maior previsão para o CEP: {}", localizacao.getCep());
 
-        log.info("Consultando previsão futura para maior temperatura em: {}", localizacao.getCep());
+            Temperatura previsao = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.FORECAST);
+            if (previsao != null && previsao.getDataHora().isAfter(LocalDateTime.now())) {
+                log.info("Previsão futura válida já existente: {}", previsao.getDataHora());
+                return;
+            }
 
-        Temperatura ultimaPrevisao = getHistoricoRequesicoesTemperatura(localizacao, EnumOrigem.FORECAST);
+            String url = montarUrl("forecast", localizacao.getLatitude(), localizacao.getLongitude());
+            OpenWeatherForecastResponseDTO forecast = buscarDadosClima(url, OpenWeatherForecastResponseDTO.class);
 
-        if (ultimaPrevisao != null && ultimaPrevisao.getDataHora().isAfter(LocalDateTime.now())) {
-            log.info("Já existe uma previsão futura válida até: {}", ultimaPrevisao.getDataHora());
-            return;
+            validarRespostaForecast(forecast, localizacao);
+
+            var maior = forecast.list().stream()
+                    .max(Comparator.comparingDouble(f -> f.main().temp_max()))
+                    .orElseThrow(() -> new RuntimeException("Nenhuma previsão encontrada"));
+
+            log.info("Maior previsão: {}°C em {}", maior.main().temp_max(), maior.dt_txt());
+
+            save(criarDtoForecast(maior, localizacao));
+        } catch (Exception e) {
+            log.error("Erro ao consultar maior temperatura no futuro para {}: {}", localizacao.getCep(), e.getMessage(), e);
+            throw new RuntimeException("Erro ao consultar temperatura futura.", e);
         }
+    }
 
-        log.info("Fazendo nova requisição de forecast...");
+    private String montarUrl(String tipo, double lat, double lon) {
+        String endpoint = tipo.equals("current") ? "weather" : "forecast";
 
-        String url = String.format(
-                "https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&units=metric&lang=pt_br&appid=%s",
-                localizacao.getLatitude(),
-                localizacao.getLongitude(),
-                apiKey
-        );
+        return String.format("https://api.openweathermap.org/data/2.5/%s?lat=%f&lon=%f&units=metric&lang=pt_br&appid=%s", endpoint, lat, lon, apiKey);
+    }
 
-        OpenWeatherForecastResponseDTO forecast = restTemplate.getForObject(url, OpenWeatherForecastResponseDTO.class);
+    private <T> T buscarDadosClima(String url, Class<T> responseType) {
+        return restTemplate.getForObject(url, responseType);
+    }
 
-        validarRespostaForecast(forecast, localizacao);
-
-        var maior = forecast.list().stream()
-                .max(Comparator.comparingDouble(f -> f.main().temp_max()))
-                .orElseThrow(() -> new RuntimeException("Nenhuma previsão encontrada"));
-
-        log.info("Maior previsão encontrada: {}°C em {}", maior.main().temp_max(), maior.dt_txt());
-
-        TemperaturaRequestDTO temperaturaRequestDTO = criarDtoForecast(maior, localizacao);
-
-        save(temperaturaRequestDTO);
+    private boolean isConsultaRecente(Temperatura temperatura) {
+        if (temperatura == null) return false;
+        Duration diferenca = Duration.between(temperatura.getDataHora(), LocalDateTime.now());
+        return diferenca.toHours() < tempoConsulta;
     }
 
     private void validarRespostaAtual(OpenWeatherResponseDTO response, Localizacao localizacao) {

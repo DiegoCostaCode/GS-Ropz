@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="../static/css/home.css">
-  <script th:src="@{/js/update_functions.js}" defer></script>
+  <script th:src="@{/js/utils_cadastro.js}" defer></script>
   <link rel="stylesheet" href="../static/css/cadastro.css">
 </head>
 <body>
@@ -69,13 +69,13 @@
             <input type="email" id="email" th:field="*{email}" required><br>
 
             <label for="telefone" th:text="#{label.tel}"></label>
-            <input type="text" id="telefone" th:field="*{telefone}" required maxlength="15"><br>
+            <input type="text" id="telefone" required th:field="*{telefone}" maxlength="15" oninput="formatarTelefone(this)"><br>
 
             <label for="senha" th:text="#{label.password}"></label>
             <input type="text" id="senha" th:field="*{senha}" required><br>
 
             <label for="cep" th:text="#{label.codigo.postal}"></label>
-            <input type="text" id="cep" th:field="*{cep}" required maxlength="9"><br>
+            <input type="text" id="cep"  required maxlength="9" th:field="*{cep}" oninput="formatarCep(this)"><br>
 
             <button class="btn-update-info" type="submit" th:text="#{btn.update}"></button>
             <a class="lowkey-btn" th:href="@{/usuario/delete}" th:text="#{href.delete}"></a>

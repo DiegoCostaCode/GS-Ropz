@@ -1,6 +1,7 @@
 package br.fiap.ropz.ropz.controller;
 
 import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
+import br.fiap.ropz.ropz.dto.relatorio.RelatoriosServiceDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.relatorio.Relatorio;
 import br.fiap.ropz.ropz.service.LocalizacaoService;

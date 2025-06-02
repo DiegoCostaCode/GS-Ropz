@@ -100,7 +100,7 @@ public class LocalizacaoService {
             throw new RuntimeException("Erro ao salvar localização");
         }
 
-        return localizacaoRepository.save(localizacao);
+        return newLocalizacao;
     }
 
     public LocalizacaoResponseDTO localizacaoResponseDTO(Localizacao localizacao) {
