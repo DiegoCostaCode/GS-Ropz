@@ -43,6 +43,9 @@ Utiliza-se modelo de IA [Mistral](https://ollama.com/library/mistral) para anali
 
 E ele promove, em uma linguagem simples, cuidados para previnir problemas de saúde.
 
+Utilizamos métodos ```@Async``` na classe de serviço [TemperaturaService](https://github.com/DiegoCostaCode/GS-Ropz/blob/master/src/main/java/br/fiap/ropz/ropz/service/TemperaturaService.java) para consultar a API do OpenWeather. As temperaturas coletadas são então enviadas, também de forma assíncrona, para [análise por uma IA](https://github.com/DiegoCostaCode/GS-Ropz/blob/master/src/main/java/br/fiap/ropz/ropz/service/llm/MistralService.java), utilizando o RabbitMQ como mecanismo de mensageria.
+Após o envio, a aplicação aguarda a resposta da IA. A cada atualização da página (refresh), os [repositórios](https://github.com/DiegoCostaCode/GS-Ropz/blob/master/src/main/java/br/fiap/ropz/ropz/service/RelatorioService.java) são acionados para verificar se os relatórios gerados pela IA já estão disponíveis para as respectivas temperaturas registradas.
+
 ---
 
 ## Identidade
@@ -87,7 +90,7 @@ E ele promove, em uma linguagem simples, cuidados para previnir problemas de sa�
 
 ## Configuração do Banco de Dados
 
-### 1. Escolha o banco e adicione a dependencia no `build.gradle`:
+#### 1. Escolha o banco e adicione a dependencia no `build.gradle`:
 
 ```gradle
 // H2 (memória)
@@ -103,7 +106,7 @@ runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc:12.2.0.jre11'
 runtimeOnly 'com.oracle.database.jdbc:ojdbc11:21.7.0.0'
 ```
 
-### 2. Configure `application.properties`
+#### 2. Configure `application.properties`
 
 #### Para SQL Server:
 
