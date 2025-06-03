@@ -45,10 +45,11 @@ public class LocalizacaoService {
             throw new IllegalArgumentException("CEP inválido ou não encontrado: " + cep);
         }
 
-        String query = String.format("%s,%s,%s", viaCep.cep(), viaCep.localidade(), viaCep.uf());
-        String urlNominatim = "https://nominatim.openstreetmap.org/search?format=json&q=" + query;
+        String url = montarUrlNomiatim(cep, viaCep.localidade(), viaCep.uf());
 
-        NominatimResponse[] coordenadasResponse = restTemplate.getForObject(urlNominatim, NominatimResponse[].class);
+        log.info("Buscando coordenadas para o CEP: [ {} ] com a URL: [ {} ]", cep, url);
+
+        NominatimResponse[] coordenadasResponse = restTemplate.getForObject(url, NominatimResponse[].class);
 
         if (coordenadasResponse == null || coordenadasResponse.length == 0) {
             log.error("Erro ao buscar coordenadas para o CEP: [ {} ]", cep);
@@ -74,6 +75,10 @@ public class LocalizacaoService {
         localizacaoDTO.setLongitude(Double.parseDouble(coordenadas.lon()));
 
         return save(localizacaoDTO);
+    }
+
+    public String montarUrlNomiatim(String cep, String cidade, String estado) {
+        return "https://nominatim.openstreetmap.org/search?format=json&q=" + cep + "," + cidade + "," + estado;
     }
 
     public String montarUrl(String cep){

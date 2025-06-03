@@ -31,18 +31,19 @@ public class RelatorioService {
     @Autowired
     private TemperaturaService temperaturaService;
 
-    public Relatorio saveRelatorioIA(MistralPromptResponseDTO mistralPromptResponseDTO)
+    public Relatorio saveRelatorioIA(Long temperaturaId, MistralPromptResponseDTO mistralPromptResponseDTO)
     {
         log.info("Iniciando processo de salvar relatório da IA com classificação: [ {} ]", mistralPromptResponseDTO.nivelRisco());
 
-        Temperatura temperatura = temperaturaService.findById(mistralPromptResponseDTO.relatorioTemperatura());
+        Temperatura temperatura = temperaturaService.findById(temperaturaId);
 
         if (temperatura == null) {
-            log.error("Temperatura ID não foi encontrada: [ {} ]", mistralPromptResponseDTO.relatorioTemperatura());
+            log.error("Temperatura ID não foi encontrada: [ {} ]", temperaturaId);
             throw new IllegalArgumentException("Temperatura não encontrada para o ID fornecido.");
         }
 
         Relatorio relatorio = new Relatorio();
+
         relatorio.setClassificacao(mistralPromptResponseDTO.nivelRisco());
         relatorio.setMensagem(mistralPromptResponseDTO.mensagem());
         relatorio.setTemperatura(temperatura);

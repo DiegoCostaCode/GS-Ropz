@@ -39,6 +39,6 @@ public class LLMConsumer {
 
         log.info("Relatorio temperatura [ {} ] analisado com sucesso: {}", temperaturaResponseDTO.id(), mistralResponse);
 
-        relatorioService.saveRelatorioIA(mistralResponse);
+        relatorioService.saveRelatorioIA(temperaturaResponseDTO.id(), mistralResponse);
     }
 }

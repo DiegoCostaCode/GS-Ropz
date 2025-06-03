@@ -214,7 +214,7 @@ public class TemperaturaService {
     }
 
     public Temperatura getHistoricoRequesicoesTemperatura(Localizacao localizacao, EnumOrigem dadosOrigem) {
-        log.info("Consultando a última se há uma consulta recente na mesma localização");
+        log.info("Consultando histórico de requisições de temperatura para a localização: [ {} ] e de tipo: [ {} ]", localizacao.getCep(), dadosOrigem);
         return temperaturaRepository.findFirstByLocalizacaoAndTipoConsultaOrderByCriadoEmDesc(localizacao, dadosOrigem).orElse(null);
     }
 

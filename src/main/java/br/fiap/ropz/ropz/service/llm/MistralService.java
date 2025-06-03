@@ -73,7 +73,6 @@ public class MistralService {
         
                 ### Formato obrigatório (somente JSON):
                 {
-                  "relatorioTemperatura": %d,
                   "nivelRisco": "BAIXO" | "MODERADO" | "ALTO" | "EXTREMO",
                   "mensagem": "Orientações curtas aqui"
                 }
@@ -82,8 +81,7 @@ public class MistralService {
                 temperaturaResponseDTO.sensacaoTermica(),
                 temperaturaResponseDTO.temperaturaMinima(),
                 temperaturaResponseDTO.temperaturaMaxima(),
-                temperaturaResponseDTO.umidade(),
-                temperaturaResponseDTO.id()
+                temperaturaResponseDTO.umidade()
         );
     }
 }
