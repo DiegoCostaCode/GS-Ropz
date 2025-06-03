@@ -44,7 +44,8 @@ public class MistralService {
     }
 
     public String gerarPrompt(TemperaturaResponseDTO temperaturaResponseDTO) {
-        log.info("Gerando prompt para análise de temperatura: {}", temperaturaResponseDTO.id());
+        log.info("Gerando prompt para análise de temperatura ID: [ {} }", temperaturaResponseDTO.id());
+
         return String.format(
                 """
                 Você é um especialista em clima da ROPZ, dando alertas práticos sobre temperaturas extremas.

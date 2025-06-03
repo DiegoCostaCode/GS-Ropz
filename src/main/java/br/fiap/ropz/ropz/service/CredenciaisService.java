@@ -28,24 +28,26 @@ public class CredenciaisService {
     @Transactional
     public Credenciais save(String email, String senha, Usuario usuario) {
 
-        log.info("Salvando credenciais para usuário: {}", usuario.getNome());
+        log.info("Salvando credenciais para usuário e-mail: [ {} ]", email);
 
         Credenciais credenciais = new Credenciais();
 
         credenciais.setEmail(email);
-
-        if(passwordEncoder.matches(senha, credenciais.getSenha())) {
-            credenciais.setSenha(senha);
-        } else {
-            credenciais.setSenha(passwordEncoder.encode(senha));
-        }
-
+        credenciais.setSenha(passwordEncoder.encode(senha));
         credenciais.setUsuario(usuario);
         credenciais.setDataCadastro(LocalDateTime.now());
         credenciais.setTipo(EnumTipoUsuario.DEFAULT);
         usuario.setCredenciais(credenciais);
 
-        return credenciaisRepository.save(credenciais);
+        try{
+            Credenciais credenciaisSalvas = credenciaisRepository.save(credenciais);
+            log.info("Credenciais salvas com sucesso! Usuário ID: [ {} ]", usuario.getId());
+            return credenciaisSalvas;
+        } catch (RuntimeException e) {
+            log.error("Erro ao salvar credenciais usuário ID: [ {} ]", usuario.getId(), e);
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Credenciais findByUsuario(Usuario usuario) {
@@ -54,24 +56,30 @@ public class CredenciaisService {
 
     @Transactional
     public Credenciais update(String email, String senha, Usuario usuario) {
-        log.info("Atualizando credenciais para usuário: {}", usuario.getNome());
+        log.info("Atualizando credenciais para usuário: [ {} ]", usuario.getCredenciais().getEmail());
 
         Credenciais credenciais = findByUsuario(usuario);
-
-        if (credenciais == null) {
-            throw new IllegalArgumentException("Credenciais não encontradas para o usuário: " + usuario.getNome());
-        }
 
         credenciais.setEmail(email);
 
         if (senha != null && !senha.isBlank() && !passwordEncoder.matches(senha, credenciais.getSenha())) {
+            log.info("Senha alterada para usuário: [ {} ]", email);
             credenciais.setSenha(passwordEncoder.encode(senha));
         } else if (senha != null && !senha.isBlank() && passwordEncoder.matches(senha, credenciais.getSenha())) {
+            log.info("Senha mantida: [ {} ]", email);
             credenciais.setSenha(usuario.getCredenciais().getSenha());
         } else if (senha == null || senha.isBlank()) {
+            log.warn("Senha não informada ou inválida para usuário: [ {} ]", email);
             throw new BadCredentialsException("Senha inválida!");
         }
 
-        return credenciaisRepository.save(credenciais);
+        try{
+            Credenciais credenciaisAtualizadas = credenciaisRepository.save(credenciais);
+            log.info("Credenciais atualizadas com sucesso! Usuário ID: [ {} ]", usuario.getId());
+            return credenciaisAtualizadas;
+        } catch (RuntimeException e) {
+            log.error("Erro ao atualizar credenciais usuário ID: [ {} ]", usuario.getId(), e);
+            throw new RuntimeException(e);
+        }
     }
 }

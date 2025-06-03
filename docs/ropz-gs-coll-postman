@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "f7fcce3e-b066-47e3-8ee6-c70437206c45",
+		"name": "GS - Ropz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "34573297"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "getById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdWNhc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg4MjI4MzIsImV4cCI6MTc0ODkwOTIzMn0.ORdua0K09WqzkXeht4fA9z5LKyrR8NaLvUDqTeuJNQSJ4NndsJpn4yCQozmIrKpFgpdEweZy87hQkcl-y90jtg"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "https://java-gs-app.azurewebsites.net/usuario/api/1"
+					},
+					"response": []
+				},
+				{
+					"name": "cadastrar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\":\"Lucas Minozzo\",\r\n    \"telefone\":\"(85) 99305-7572\",\r\n    \"email\":\"lucas@gmail.com\",\r\n    \"senha\":\"@Lucas123\",\r\n    \"cep\":\"04516-012\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/usuario/api/"
+					},
+					"response": []
+				},
+				{
+					"name": "deleteById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdWNhc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg4MjI4MzIsImV4cCI6MTc0ODkwOTIzMn0.ORdua0K09WqzkXeht4fA9z5LKyrR8NaLvUDqTeuJNQSJ4NndsJpn4yCQozmIrKpFgpdEweZy87hQkcl-y90jtg"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://java-gs-app.azurewebsites.net/usuario/api/1"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"lucas@gmail.com\",\r\n    \"senha\":\"@Lucas123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://java-gs-app.azurewebsites.net/api/login"
+					},
+					"response": []
+				},
+				{
+					"name": "usuarioUpdate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdWNhc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg4MTc5NDUsImV4cCI6MTc0ODkwNDM0NX0.LLcY_HkCqLR9skd2DXMEVtm-JJNQTbred_GKxVQwHRhY2pSj8N6z_Nmqa8BrS6Jbflgns6sq_8kS_lr6ctMVUA"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\":\"Lucas\",\r\n    \"telefone\":\"(85) 99305-7572\",\r\n    \"email\":\"lucas@gmail.com\",\r\n    \"senha\":\"lucas123@\",\r\n    \"cep\":\"61634-245\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/usuario/api/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "relatorio",
+			"item": [
+				{
+					"name": "currentWeatherHistoryByTemperatura",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:8080/relatorio/api/temperaturas/current/2"
+					},
+					"response": []
+				},
+				{
+					"name": "forecastWeatherHighestByTemperatura",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/relatorio/api/temperatura/forecast/1"
+					},
+					"response": []
+				},
+				{
+					"name": "getRelatorioByIdTemperatura",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/relatorio/api/temperatura/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "temperatura",
+			"item": [
+				{
+					"name": "getCurrentTemperaturaByLoc",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdWNhc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg2NDY1OTksImV4cCI6MTc0ODczMjk5OX0.iizCLAXRBRApv22awxIiUiMkSyrl5da_bXKYP_Zz95tfojXRjNDA72flqQHztRabJYQbfvMysHlawJcjhyEggw"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/temperatura/api/current/1"
+					},
+					"response": []
+				},
+				{
+					"name": "getForecastTemperaturaByLoc",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/temperatura/api/forecast/1"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

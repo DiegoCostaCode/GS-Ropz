@@ -43,10 +43,6 @@ public class UsuarioController {
         log.info("Recebida requisição de registro via formulário para usuário: {}", userRequestDTO.getEmail());
 
         Usuario usuario = usuarioService.save(userRequestDTO);
-        Localizacao localizacao = usuario.getLocalizacao();
-
-        temperaturaService.consultarTemperaturaAtual(localizacao);
-        temperaturaService.consultarMaiorPrevisao(localizacao);
 
         return "redirect:/login";
     }

@@ -27,23 +27,21 @@ public class LocalizacaoService {
 
     public Localizacao buscarPorCep(String cep) {
 
-        log.info("Buscando localização por CEP: {}", cep);
+        log.info("Buscando localização por CEP: [ {} ]", cep);
         Localizacao localizacao = localizacaoRepository.findByCep(cep).orElse(null);
 
         if (localizacao != null) {
-            log.info("Localização encontrada no banco de dados: {}", localizacao);
+            log.info("Localização [ {} ] encontrada no banco de dados.", cep);
             return localizacao;
         }
 
-        log.info("Localização não encontrada no banco de dados, buscando via API");
-
-        String urlViaCep = "https://viacep.com.br/ws/" + cep + "/json/";
+        String urlViaCep = montarUrl(cep);
         ViaCepResponse viaCep = restTemplate.getForObject(urlViaCep, ViaCepResponse.class);
 
         log.info("ViaCep: {}", viaCep);
 
         if (viaCep == null || viaCep.cep() == null) {
-            log.error("Erro ao buscar CEP: {}", cep);
+            log.error("Erro ao buscar CEP: [ {} ]", cep);
             throw new IllegalArgumentException("CEP inválido ou não encontrado: " + cep);
         }
 
@@ -53,16 +51,16 @@ public class LocalizacaoService {
         NominatimResponse[] coordenadasResponse = restTemplate.getForObject(urlNominatim, NominatimResponse[].class);
 
         if (coordenadasResponse == null || coordenadasResponse.length == 0) {
-            log.error("Erro ao buscar coordenadas para o CEP: {}", cep);
+            log.error("Erro ao buscar coordenadas para o CEP: [ {} ]", cep);
             throw new IllegalArgumentException("Coordenadas não encontradas para o CEP: " + cep);
         }
 
         NominatimResponse coordenadas = coordenadasResponse[0];
 
-        log.info("Coordenadas encontradas: {}", coordenadas);
+        log.info("Coordenadas do CEP [ {} ] encontradas: [ {} ]", cep, coordenadas);
 
         if (coordenadas == null || coordenadas.lat() == null || coordenadas.lon() == null) {
-            log.error("Erro ao buscar coordenadas para o CEP: {}", cep);
+            log.error("Erro ao buscar coordenadas para o CEP: [ {} ]", cep);
             throw new IllegalArgumentException("Coordenadas não encontradas para o CEP: " + cep);
         }
 
@@ -75,14 +73,16 @@ public class LocalizacaoService {
         localizacaoDTO.setLatitude(Double.parseDouble(coordenadas.lat()));
         localizacaoDTO.setLongitude(Double.parseDouble(coordenadas.lon()));
 
-        log.info("Localização encontrada via API");
-
         return save(localizacaoDTO);
+    }
+
+    public String montarUrl(String cep){
+        return "https://viacep.com.br/ws/" + cep + "/json/";
     }
 
     public Localizacao save(LocalizacaoDTO localizacaoDTO) {
 
-        log.info("Salvando localização");
+        log.info("Salvando localização CEP: [ {} ]", localizacaoDTO.getCep());
 
         Localizacao localizacao = new Localizacao();
 
@@ -93,18 +93,19 @@ public class LocalizacaoService {
         localizacao.setLatitude(localizacaoDTO.getLatitude());
         localizacao.setLongitude(localizacaoDTO.getLongitude());
 
-        Localizacao newLocalizacao = localizacaoRepository.save(localizacao);
 
-        if (newLocalizacao == null) {
-            log.error("Erro ao salvar localização: {}", localizacao);
-            throw new RuntimeException("Erro ao salvar localização");
+        try{
+            Localizacao newLocalizacao = localizacaoRepository.save(localizacao);
+            log.info("Localização salva com sucesso! ID [ {} ] - Cep [{}]", newLocalizacao.getId(), newLocalizacao.getCep());
+            return newLocalizacao;
         }
-
-        return newLocalizacao;
+        catch (Exception e) {
+            log.error("Erro ao criar localização CEP: [{}]", localizacaoDTO.getCep(), e);
+            throw new RuntimeException("Erro ao criar localização");
+        }
     }
 
     public LocalizacaoResponseDTO localizacaoResponseDTO(Localizacao localizacao) {
-        log.info("Convertendo Localizacao para LocalizacaoResponseDTO");
 
         return new LocalizacaoResponseDTO(
             localizacao.getId(),
@@ -118,7 +119,7 @@ public class LocalizacaoService {
     }
 
     public Localizacao findById(Long id) {
-        log.info("Consultando localização por ID: {}", id);
+        log.info("Consultando localização por ID: [ {} ]", id);
         return localizacaoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Nenhuma localização encontrada com o ID: " + id));
     }

@@ -99,7 +99,7 @@ public class TemperaturaService {
                     .max(Comparator.comparingDouble(f -> f.main().temp_max()))
                     .orElseThrow(() -> new RuntimeException("Nenhuma previsão encontrada"));
 
-            log.info("Maior previsão: {}°C em {}", maior.main().temp_max(), maior.dt_txt());
+            log.info("Previsão realizada: {}°C em {}", maior.main().temp_max(), maior.dt_txt());
 
             save(criarDtoForecast(maior, localizacao));
         } catch (Exception e) {
@@ -175,7 +175,8 @@ public class TemperaturaService {
     }
 
     public Temperatura save(TemperaturaRequestDTO temperaturaRequest) {
-        log.info("Salvando a temperatura atual");
+
+        log.info("Salvando a temperatura: [ {} °C]", temperaturaRequest.valorCelsius());
 
         Temperatura temperatura = new Temperatura();
 
@@ -192,15 +193,21 @@ public class TemperaturaService {
         temperatura.setTipoConsulta(temperaturaRequest.tipoConsulta());
         temperatura.setLocalizacao(temperaturaRequest.localizacao());
 
-        Temperatura temperaturaSalva = temperaturaRepository.save(temperatura);
+        try{
+            Temperatura temperaturaSalva = temperaturaRepository.save(temperatura);
 
-        temperaturaProducer.enviarParaAnalise(temperaturaToResponse(temperaturaSalva));
+            log.info("Temperatura salva com sucesso! [ {} ] - Temperatura [ {} °C]", temperaturaSalva.getId(), temperaturaSalva.getTemperatura());
 
-        return temperaturaSalva;
+            temperaturaProducer.enviarParaAnalise(temperaturaToResponse(temperaturaSalva));
+            return temperaturaSalva;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Temperatura findById(Long id) {
-        log.info("Buscando relatorio por ID: {}", id);
+        log.info("Buscando temperatura [ {} ]", id);
 
         return temperaturaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Temperatura não encontrada para o ID: " + id));
@@ -212,7 +219,6 @@ public class TemperaturaService {
     }
 
     public TemperaturaResponseDTO temperaturaToResponse(Temperatura temperatura) {
-        log.info("Convertendo temperatura para DTO de resposta");
 
         LocalizacaoResponseDTO localResponse = localizacaoService.localizacaoResponseDTO(temperatura.getLocalizacao());
 

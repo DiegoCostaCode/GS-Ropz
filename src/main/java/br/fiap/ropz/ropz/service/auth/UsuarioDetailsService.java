@@ -21,11 +21,11 @@ public class UsuarioDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("Buscando usuário por email: {}", email);
+        log.info("Buscando usuário por email: [ {} ]", email);
         Usuario usuario = usuarioService.getByEmail(email);
 
         if (usuario == null) {
-            log.warn("Usuário não encontrado com o email: {}", email);
+            log.warn("Usuário não encontrado com o email: [ {} ]", email);
             throw new UsernameNotFoundException("Usuário não encontrado com o email: " + email);
         }
 

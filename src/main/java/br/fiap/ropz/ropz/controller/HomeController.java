@@ -37,8 +37,6 @@ public class HomeController {
 
         Usuario usuarioEncontrado = usuarioService.getById(user.getUsuario().getId());
 
-        log.info("Acessando a página inicial do usuário: {} - CEP: {}", user.getUsername(), usuarioEncontrado.getLocalizacao().getCep());
-
         Localizacao localizacao = localizacaoService.findById(usuarioEncontrado.getLocalizacao().getId());
 
         UsuarioRequestDTO usuarioRequest = usuarioService.usuarioRequestDTO(usuarioEncontrado.getId());
@@ -47,7 +45,6 @@ public class HomeController {
 
         model.addAttribute("localizacao", localizacao);
         model.addAttribute("usuarioRequestDTO", usuarioRequest);
-
         model.addAttribute("temperaturaAtualLocal", relatorios.relatorioMaisRecente());
         model.addAttribute("historicoLocal", relatorios.relatoriosCurrent());
         model.addAttribute("previsaoLocal", relatorios.relatorioForecast());

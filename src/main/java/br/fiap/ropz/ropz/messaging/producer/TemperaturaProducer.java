@@ -26,8 +26,8 @@ public class TemperaturaProducer {
     }
 
     public void enviarParaAnalise(TemperaturaResponseDTO temperaturaResponseDTO) {
-        log.info("Enviando a analise de relatorio {} - CEP {}", temperaturaResponseDTO.id(), temperaturaResponseDTO.localizacao().cep());
+        log.info("Enviando a analise de relatorio temperatura ID [ {} ] - CEP [ {} ]", temperaturaResponseDTO.id(), temperaturaResponseDTO.localizacao().cep());
         rabbitTemplate.convertAndSend(exchange, routingKey, temperaturaResponseDTO);
-        log.info("Mensagem enviada para a fila com sucesso.");
+        log.info("Mensagem enviada para a fila com sucesso. Temperatura ID [ {} ] - CEP [ {} ]", temperaturaResponseDTO.id(), temperaturaResponseDTO.localizacao().cep());
     }
 }

@@ -1,13 +1,9 @@
 package br.fiap.ropz.ropz.controller;
 
-import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
 import br.fiap.ropz.ropz.model.Localizacao;
-import br.fiap.ropz.ropz.model.relatorio.Relatorio;
 import br.fiap.ropz.ropz.service.LocalizacaoService;
-import br.fiap.ropz.ropz.service.RelatorioService;
 import br.fiap.ropz.ropz.service.TemperaturaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

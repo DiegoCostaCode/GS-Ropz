@@ -1,6 +1,5 @@
 package br.fiap.ropz.ropz.service;
 
-import br.fiap.ropz.ropz.dto.localizacao.LocalizacaoResponseDTO;
 import br.fiap.ropz.ropz.dto.mistral.MistralPromptResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatorioResponseDTO;
 import br.fiap.ropz.ropz.dto.relatorio.RelatoriosServiceDTO;
@@ -31,17 +30,15 @@ public class RelatorioService {
 
     @Autowired
     private TemperaturaService temperaturaService;
-    @Autowired
-    private LocalizacaoService localizacaoService;
 
     public Relatorio saveRelatorioIA(MistralPromptResponseDTO mistralPromptResponseDTO)
     {
-        log.info("Iniciando processo de salvar relatório da IA com classificação: {}", mistralPromptResponseDTO.nivelRisco());
+        log.info("Iniciando processo de salvar relatório da IA com classificação: [ {} ]", mistralPromptResponseDTO.nivelRisco());
 
         Temperatura temperatura = temperaturaService.findById(mistralPromptResponseDTO.relatorioTemperatura());
 
         if (temperatura == null) {
-            log.error("Temperatura ID não foi encotrada: {}", mistralPromptResponseDTO.relatorioTemperatura());
+            log.error("Temperatura ID não foi encontrada: [ {} ]", mistralPromptResponseDTO.relatorioTemperatura());
             throw new IllegalArgumentException("Temperatura não encontrada para o ID fornecido.");
         }
 
@@ -51,13 +48,21 @@ public class RelatorioService {
         relatorio.setTemperatura(temperatura);
         relatorio.setCriadoEm(LocalDateTime.now());
 
-        log.info("Salvando relatório com classificação: {} e mensagem: {}", relatorio.getClassificacao().getDescricao(), relatorio.getMensagem());
+        log.info("Salvando relatório temperatura [ {} ] - com classificação [ {} ] e mensagem: [ {} ]", temperatura.getId(), relatorio.getClassificacao().getDescricao(), relatorio.getMensagem());
 
-        return relatorioRepository.save(relatorio);
+        try{
+            relatorio = relatorioRepository.save(relatorio);
+            log.info("Relatório salvo com sucesso! Relatório ID: [ {} ] - Temp ID: [ {} ]", relatorio.getId(), relatorio.getTemperatura().getId());
+            return relatorio;
+        } catch (Exception e) {
+            log.error("Erro ao salvar relatório ID: [ {} ]", e.getMessage());
+            throw new RuntimeException("Erro ao salvar relatório.");
+        }
+
     }
 
     public Relatorio findByRelatorioTemperaturaId(Long temperaturaId) {
-        log.info("Buscando relatório pelo ID da temperatura: {}", temperaturaId);
+        log.info("Buscando relatório temperatura ID: [ {} ]", temperaturaId);
         return relatorioRepository.findByTemperaturaId(temperaturaId).orElse(null);
     }
 
@@ -76,7 +81,6 @@ public class RelatorioService {
     }
 
     public List<Relatorio> getRelatorioOrigemCurrent(Localizacao localizacao) {
-        log.info("Trazendo os 4 últimos registros de relatorio para a localização: {}", localizacao.getCep());
 
          return relatorioRepository.findByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsultaOrderByCriadoEmDesc(localizacao, EnumOrigem.CURRENT)
                 .stream()
@@ -85,24 +89,30 @@ public class RelatorioService {
     }
 
     public Relatorio getRelatorioOrigemForecast(Localizacao localizacao) {
-        log.info("Trazendo relatorio de previsão: {}", localizacao.getCep());
 
         return relatorioRepository.findFirstByClassificacaoIsNotNullAndTemperatura_LocalizacaoAndTemperatura_TipoConsulta(localizacao, EnumOrigem.FORECAST).orElse(null);
     }
 
     public RelatoriosServiceDTO getRelatorios(Localizacao localizacao) {
 
-        temperaturaService.consultarTemperaturaAtual(localizacao);
-        temperaturaService.consultarMaiorPrevisao(localizacao);
+        log.info("Buscando relatórios para a localização CEP: [ {} ]", localizacao.getCep());
 
-        List<Relatorio> historico = getRelatorioOrigemCurrent(localizacao);
+        List<Relatorio> historico = getRelatorioOrigemCurrent(localizacao); //Temperaturas presentes
 
-        Relatorio forecast = getRelatorioOrigemForecast(localizacao);
+        Relatorio forecast = getRelatorioOrigemForecast(localizacao); //Temperaturas futuras
 
         Relatorio maisRecente = historico.stream()
                 .max(Comparator.comparing(r -> r.getTemperatura().getDataHora()))
                 .orElse(null);
 
+        if(historico.isEmpty() && forecast == null) {
+            log.warn("Nenhum relatório encontrado para a localização: {}", localizacao.getCep());
+
+            temperaturaService.consultarTemperaturaAtual(localizacao); //ASYNC
+            temperaturaService.consultarMaiorPrevisao(localizacao); //ASYNC
+        }
+
+        log.info("Relatórios encontrados: [ {} ] Temperaturas encontradas | Previsão temperatura ID: [ {} ]", historico.size(), forecast != null ? forecast.getTemperatura().getId() : "Nenhum encontrado!");
         return new RelatoriosServiceDTO(historico, forecast, maisRecente);
     }
 

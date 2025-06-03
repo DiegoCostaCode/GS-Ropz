@@ -56,7 +56,7 @@ public class UsuarioService {
 
     @Transactional
     public Usuario update(Long idUsuario, UsuarioRequestDTO userRequestDTO){
-        log.info("Atualizando usuário: {}", userRequestDTO.getNome());
+        log.info("Atualizando usuário: {}", userRequestDTO.getEmail());
 
         Usuario usuario = getById(idUsuario);
 
@@ -70,12 +70,12 @@ public class UsuarioService {
 
         credenciaisService.update(userRequestDTO.getEmail(), userRequestDTO.getSenha(), usuarioSalvo);
 
-        log.info("Usuário atualizado! ID: {}", usuarioSalvo.getId());
+        log.info("Usuário atualizado! ID: [ {} ]", usuarioSalvo.getId());
         return usuarioSalvo;
     }
 
     public Usuario getById(Long idUsuario) {
-        log.info("Buscando usuário por ID: {}", idUsuario);
+        log.info("Buscando usuário por ID: [ {} ]", idUsuario);
 
         return usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com ID"));
@@ -97,9 +97,6 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO usuarioResponse(Usuario usuario) {
-        log.info("Convertendo usuário para DTO: {}", usuario.getNome());
-
-        System.out.println("Convertendo usuário para DTO: " + usuario.getLocalizacao().getCep());
 
         LocalizacaoResponseDTO localizacaoResponseDTO = localizacaoService.localizacaoResponseDTO(usuario.getLocalizacao());
 
@@ -129,25 +126,28 @@ public class UsuarioService {
     }
 
     public void deleteById(Long idUsuario) {
-        log.info("Deletando usuário com ID: {}", idUsuario);
+        log.info("Deletando usuário com ID: [ {} ]", idUsuario);
 
         try {
             usuarioRepository.deleteById(idUsuario);
-            log.info("Usuário com ID {} deletado com sucesso", idUsuario);
+            log.info("Usuário com ID: [ {} ] - Deletado com sucesso!", idUsuario);
         } catch (IllegalArgumentException e) {
-            log.error("Erro ao deletar usuário com ID {}: {}", idUsuario, e.getMessage());
+            log.error("Erro ao deletar usuário com ID: [ {} ] - {}", idUsuario, e.getMessage());
         }
     }
 
     public Usuario authenticate(String email, String senha) {
+        log.info("Autenticando usuário email: [ {} ]", email);
 
         Usuario usuario = getByEmail(email);
 
         if (usuario == null) {
+            log.info("Usuário email: [ {} ] - Não encontrado", email);
             throw new UsernameNotFoundException("Email não encontrado");
         }
 
         if (!passwordEncoder.matches(senha, usuario.getCredenciais().getSenha())) {
+            log.info("Senha inválida! Email: [ {} ]", email);
             throw new BadCredentialsException("Senha inválida");
         }
 

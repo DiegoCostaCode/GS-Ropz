@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LLMConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+    private static final Logger log = LoggerFactory.getLogger(LLMConsumer.class);
 
     @Autowired
     private RelatorioService relatorioService;
@@ -25,7 +25,7 @@ public class LLMConsumer {
     @RabbitListener(queues = "${app.rabbitmq.queue}")
     public void receber(TemperaturaResponseDTO temperaturaResponseDTO) {
 
-        log.info("Recebendo relatorio para análise {} - CEP {}",
+        log.info("Recebendo relatorio para análise. Temperatura ID: [ {} ] - CEP [ {} ]",
                 temperaturaResponseDTO.id(),
                 temperaturaResponseDTO.localizacao().cep()
         );
@@ -33,11 +33,11 @@ public class LLMConsumer {
         MistralPromptResponseDTO mistralResponse = mistralService.analisarRelatorio(temperaturaResponseDTO);
 
         if (mistralResponse == null) {
-            log.error("Erro ao analisar relatorio com Mistral.");
+            log.error("Erro ao analisar relatorio com Mistral. Temperatura: {}",temperaturaResponseDTO.id());
             throw new RuntimeException("Erro ao analisar relatorio.");
         }
 
-        log.info("Relatorio analisado com sucesso: {}", mistralResponse);
+        log.info("Relatorio temperatura [ {} ] analisado com sucesso: {}", temperaturaResponseDTO.id(), mistralResponse);
 
         relatorioService.saveRelatorioIA(mistralResponse);
     }

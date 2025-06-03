@@ -28,9 +28,6 @@ public class RelatorioController {
     @Autowired
     private LocalizacaoService localizacaoService;
 
-    @Autowired
-    private TemperaturaService temperaturaService;
-
     @GetMapping(value = "/api/temperatura/{idTemperatura}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RelatorioResponseDTO> getRelatorioByTemperaturaId(@PathVariable  Long idTemperatura) {
 
