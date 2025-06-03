@@ -122,7 +122,7 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 spring.datasource.url=jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl
 spring.datasource.username=${dbUser}
 spring.datasource.password=${dbPass}
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
 ```
 
 ## Executando a Aplicação
