@@ -31,15 +31,6 @@ public class AuthController {
     @Autowired
     UsuarioService usuarioService;
 
-
-    @GetMapping("/cadaster")
-    public String cadastrarUsuario(Model model) {
-
-        model.addAttribute("usuarioRequest", new UsuarioRequestDTO());
-
-        return "cadastro";
-    }
-
     @GetMapping("/login")
     public String loginPage() {
         return "login";

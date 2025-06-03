@@ -27,7 +27,12 @@
     </div>
 
     <button type="submit" th:text="#{btn.submit}"></button>
-    <a th:href="@{/cadaster}" class="link-href" th:text="#{href.cadaster}"></a>
+    <a th:href="@{usuario/}" class="link-href" th:text="#{href.cadaster}"></a>
+    <div class="internationalization-menu">
+      <a href="/login?lang=pt_BR" class="link-href">BR</a> <!-- DISCLAIMER PROFESSOR: Colocar o endpoint antes do ? evita problema 500 de GET -->
+      <a href="/login?lang=en" class="link-href">EN</a> <!-- DISCLAIMER PROFESSOR: Colocar o endpoint antes do ? evita problema 500 de GET -->
+    </div>
   </form>
+
 </body>
 </html>

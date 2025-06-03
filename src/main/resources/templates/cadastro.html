@@ -10,6 +10,7 @@
 
 </head>
 <body>
+
     <form method="post" th:action="@{/usuario/register}" th:object="${usuarioRequest}">
 
         <section>
@@ -19,30 +20,43 @@
         <div>
             <label for="nome" th:text="#{label.name}"></label>
             <input type="text" id="nome" name="nome" placeholder="Calor da Silva" th:field="*{nome}">
+            <span class="error-span" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
         </div>
 
         <div>
             <label for="email" th:text="#{label.email}"></label>
             <input type="email" id="email" name="email" placeholder="calor@gmail.com" th:field="*{email}">
+            <span class="error-span" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
         </div>
 
         <div>
             <label for="telefone" th:text="#{label.tel}"></label>
             <input type="tel" id="telefone" name="telefone" max=15 placeholder="(99) 9999-9999" th:field="*{telefone}" maxlength="15" oninput="formatarTelefone(this)">
+            <span class="error-span" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}"></span>
         </div>
 
         <div>
             <label for="senha" th:text="#{label.password}"></label>
             <input type="password" id="senha" name="senha" th:placeholder="#{placeholder.password}" th:field="*{senha}" >
+            <span class="error-span" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
         </div>
 
         <div class="cep-div">
             <label for="cep" th:text="#{label.codigo.postal}"></label>
             <input type="text" id="cep" name="cep" max=9 placeholder="00000-000" th:field="*{cep}" maxlength="9" oninput="formatarCep(this)">
+            <span class="error-span" th:if="${#fields.hasErrors('cep')}" th:errors="*{cep}"></span>
         </div>
 
         <button type="submit" th:text="#{btn.cadaster}"></button>
         <a th:href="@{/login}" class="link-href" th:text="#{href.login}"></a>
+
+        <div class="internationalization-menu">
+          <a href="/usuario/?lang=pt_BR" class="link-href">BR</a> <!-- DISCLAIMER PROFESSOR: Colocar o endpoint antes do ? evita problema 500 de GET -->
+            <a href="/usuario/?lang=en" class="link-href">EN</a> <!-- DISCLAIMER PROFESSOR: Colocar o endpoint antes do ? evita problema 500 de GET -->
+        </div>
+
     </form>
+
 </body>
+
 </html>

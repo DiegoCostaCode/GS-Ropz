@@ -15,26 +15,26 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UsuarioRequestDTO {
 
-    @NotBlank(message = "Nome não pode ser vazio")
-    @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
+    @NotBlank(message = "{validation.blank.nome}")
+    @Size(min= 3, max = 50, message = "{validation.size.nome}")
     private String nome;
 
-    @NotBlank(message = "Telefone deve ser preenchido")
+    @NotBlank(message = "{validation.blank.telefone}")
     @Pattern(regexp = "^\\(?[1-9]{2}\\)? ?(?:[2-8]|9[1-9])[0-9]{3}\\-?[0-9]{4}$",
-            message = "O telefone deve estar no formato (DDD) 91234-5678 ou (DDD) 1234-5678")
+            message = "{validation.pattern.telefone}")
     private String telefone;
 
-    @NotBlank(message = "Email é obrigatório")
-    @Email(message = "Email inválido")
+    @NotBlank(message = "{validation.blank.email}")
+    @Email(message = "{validation.email.email}")
     private String email;
 
-    @NotBlank(message = "Senha é obrigatória para cadastro")
-    @Size(min = 3, max = 20, message = "Senha deve ter entre 3 e 20 caracteres")
+    @NotBlank(message = "{validation.blank.senha}")
+    @Size(min = 3, max = 20, message = "{validation.size.senha}")
     private String senha;
 
-    @NotBlank(message = "CEP deve ser preenchido")
-    @Pattern(regexp = "^[0-9]{5}-[0-9]{3}$", message = "O CEP deve estar no formato 12345-678")
-    @Size(max = 9, message = "CEP deve ter no máximo 9 caracteres")
+    @NotBlank(message = "{validation.blank.cep}")
+    @Pattern(regexp = "^[0-9]{5}-[0-9]{3}$", message = "{validation.pattern.cep}")
+    @Size(max = 9, message = "{validation.size.cep}")
     private String cep;
 
 }

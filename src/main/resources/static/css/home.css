@@ -249,10 +249,4 @@ input:focus {
     text-decoration: underline;
 }
 
-.footer-cls{
-    display: flex;
-    margin-top: 10px;
-    gap: 10px;
-    width: 700px;
-}
 

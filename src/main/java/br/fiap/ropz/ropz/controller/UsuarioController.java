@@ -2,13 +2,8 @@ package br.fiap.ropz.ropz.controller;
 
 import br.fiap.ropz.ropz.dto.usuario.UsuarioRequestDTO;
 import br.fiap.ropz.ropz.dto.usuario.UsuarioResponseDTO;
-import br.fiap.ropz.ropz.model.Localizacao;
 import br.fiap.ropz.ropz.model.Usuario;
-import br.fiap.ropz.ropz.model.relatorio.Relatorio;
-import br.fiap.ropz.ropz.model.temperatura.Temperatura;
 import br.fiap.ropz.ropz.model.usuario.UsuarioDetails;
-import br.fiap.ropz.ropz.service.RelatorioService;
-import br.fiap.ropz.ropz.service.TemperaturaService;
 import br.fiap.ropz.ropz.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -19,9 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/usuario")
@@ -32,15 +28,21 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private TemperaturaService temperaturaService;
+    @GetMapping("/")
+    public String cadastrarUsuario(Model model) {
 
-    @Autowired
-    private RelatorioService relatorioService;
+        model.addAttribute("usuarioRequest", new UsuarioRequestDTO());
+
+        return "cadastro";
+    }
 
     @PostMapping("/register")
-    public String save(@Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
-        log.info("Recebida requisição de registro via formulário para usuário: {}", userRequestDTO.getEmail());
+    public String save(@Valid @ModelAttribute("usuarioRequest") UsuarioRequestDTO userRequestDTO, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            log.error("Erro ao processar o formulário de cadastro: {}", bindingResult.getAllErrors());
+            return "cadastro";
+        }
 
         Usuario usuario = usuarioService.save(userRequestDTO);
 
@@ -49,7 +51,6 @@ public class UsuarioController {
 
     @GetMapping("/update")
     public String update(@AuthenticationPrincipal UsuarioDetails user, @Valid @ModelAttribute UsuarioRequestDTO userRequestDTO) {
-        log.info("Recebida requisição de atualização via formulário para usuário: {}", userRequestDTO.getEmail());
 
         Usuario usuario = user.getUsuario();
 
@@ -60,13 +61,12 @@ public class UsuarioController {
 
     @GetMapping("/delete")
     public String delete(@AuthenticationPrincipal UsuarioDetails user) {
-        log.info("Recebida requisição de atualização via formulário para usuário");
 
         Usuario usuario = user.getUsuario();
 
         usuarioService.deleteById(usuario.getId());
 
-        return "redirect:/cadaster";
+        return "redirect:/usuario/";
     }
 
     @PostMapping(value = "/api/", produces = MediaType.APPLICATION_JSON_VALUE)

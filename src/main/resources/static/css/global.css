@@ -16,3 +16,24 @@ body {
     font-size: 14px;
     background: #fcfcfc;
 }
+
+.internationalization-menu{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.error-span {
+    background: #E54A4A;
+    font-weight: bold;
+    color: #ffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0px;
+    width: 100%;
+    max-width: 300px;
+}
