@@ -48,6 +48,20 @@ Após o envio, a aplicação aguarda a resposta da IA. A cada atualização da p
 
 ---
 
+## Apis Utilizadas
+
+### [ViaCEP](https://viacep.com.br)
+Uma das APIs mais populares para busca de CEP, uma forma simples de encontrar a localização do usuário.
+
+### [Nominatim](https://nominatim.org)
+Uma API opensource, para captura de longitude e latitude com base em informações como CEP, Cidade. Informações promovidas pelo ViaCEP (Cidade, estado).
+
+### [OpenWeather](https://openweathermap.org/api)
+Também uma das APIs mais populares. Utilizamos dois endpoints: 
+1. [current - para status de clima atual](https://openweathermap.org/current)
+2. [forecast - projeção de clima para os próximos 5 dias](https://openweathermap.org/forecast5)
+---
+
 ## Identidade
 
 ![frame-app-design](https://github.com/user-attachments/assets/c8a6ace8-08f0-4f96-8cc1-b16a5af8345a)
