@@ -233,7 +233,7 @@ public class TemperaturaService {
                 temperatura.getSensacaoTermica(),
                 temperatura.getUmidade(),
                 localResponse,
-                temperatura.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                temperatura.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
         );
     }
 }

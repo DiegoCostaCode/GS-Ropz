@@ -76,7 +76,7 @@ public class RelatorioService {
                 relatorio.getClassificacao().getDescricao(),
                 relatorio.getMensagem(),
                 tempResponse,
-                relatorio.getTemperatura().getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                relatorio.getTemperatura().getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
                 relatorio.getCriadoEm().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
         );
     }
